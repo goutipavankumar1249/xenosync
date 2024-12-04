@@ -54,6 +54,8 @@ dependencies:
   timeago: "3.1.0"
   flutter_keyboard_visibility: "5.0.3"
   file_picker: "4.0.1"
+  google_sign_in: ^6.2.2
+  fluttertoast: ^8.2.8
 
 
 dev_dependencies:
