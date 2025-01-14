@@ -29,7 +29,7 @@ class _BrandState extends State<Brand> {
       // Replace with your next page's route
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => NicheForBrand()),
+        MaterialPageRoute(builder: (context) => Production_house()),
       );
     } else {
       // Show a snackbar if no role is selected

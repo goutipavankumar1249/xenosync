@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:login_app/components/Business/NicheForBrand.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
 import '../UserState.dart';
@@ -15,7 +17,7 @@ class _DetailsForBrandState extends State<DetailsForBrand> {
   final _formKey = GlobalKey<FormState>();
   String? brandName, establishmentDate, location, instagramHandle;
   File? _imageFile;
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.reference();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
@@ -47,7 +49,7 @@ class _DetailsForBrandState extends State<DetailsForBrand> {
       //   "instagram_handle": instagramHandle,
       //   "image_url": imageUrl,
       // });
-      await databaseRef.child("users/$userId").set({
+      await _firestore.collection('users').doc('$userId').collection('intrest').doc('basic details').set({
         "brand_name": brandName,
         "establishment_date": establishmentDate,
         "location": location,
@@ -55,12 +57,13 @@ class _DetailsForBrandState extends State<DetailsForBrand> {
         "image_url": imageUrl,
       });
 
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Brand details saved successfully!")),
       );
 
       // Navigate to the next page (if applicable)
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => NextPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => NicheForBrand()));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please fill in all fields correctly.")),

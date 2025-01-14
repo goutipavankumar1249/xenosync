@@ -38,7 +38,6 @@ dependencies:
   firebase_core: ^2.27.1
   firebase_app_check: ^0.2.0
   firebase_auth: ^4.17.9
-  cloud_firestore: ^4.15.9
   firebase_storage: ^11.6.10
   firebase_database: ^10.5.7
   dash_chat_2: ^0.0.20
@@ -56,6 +55,7 @@ dependencies:
   file_picker: "4.0.1"
   google_sign_in: ^6.2.2
   fluttertoast: ^8.2.8
+  cloud_firestore: ^4.17.5
 
 
 dev_dependencies:

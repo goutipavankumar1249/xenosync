@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:login_app/components/UploadImagesPage.dart';
@@ -43,8 +44,10 @@ class _PassionPageState extends State<PassionPage> {
   Future<void> savePassionsToFirebase(String userId) async {
     try {
       // Firebase Realtime Database instance
-      final DatabaseReference _database = FirebaseDatabase.instance.ref();
-      await _database.child("users/$userId/passions").set(selectedPassions.toList());
+      final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+      await _firestore.collection('users').doc('$userId').collection('intrest').doc('passion').set({
+        "passion" :selectedPassions.toList(),
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Passions saved successfully!")),
       );

@@ -1,60 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:login_app/components/individual/DetailsForInfluencer.dart';
-import 'package:login_app/components/individual/PassionPage.dart';
+import 'package:login_app/components/individual/Model2.dart';
 import 'package:provider/provider.dart';
 import '../UserState.dart';
 
-class AudienceForInfluencer extends StatefulWidget {
+class ModelNiche extends StatefulWidget {
   @override
-  _AudienceForInfluencerState createState() => _AudienceForInfluencerState();
+  _ModelNicheState createState() => _ModelNicheState();
 }
 
-class _AudienceForInfluencerState extends State<AudienceForInfluencer> {
+class _ModelNicheState extends State<ModelNiche> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Options
   final List<String> nicheOptions = [
-    "Lifestyle",
-    "Fashion & Beauty",
-    "Technology & Gadgets",
-    "Travel & Adventure",
-    "Health & Fitness",
-    "Music",
-    "Parenting & Family",
-    "Food & Beverage",
-    "Sports",
-    "Finance & Business",
-    "Gaming & Esports",
-    "Art & Design"
+    "Ramp Walk Model",
+    "Fashion Model",
+    "Editorial Model",
+    "Commercial Model",
+    "Fitness Model",
+    "Lingerie/Bikini Model",
+    "Plus-Size Model",
+    "Product/Commercial Shoots",
+    "Runway/Showroom",
+    "Photographic Model"
   ];
 
-  final List<String> platformFocusOptions = [
-    "TikTok",
-    "Facebook",
-    "LinkedIn",
-    "Pinterest",
-    "Instagram",
-    "Youtube",
-    "Snapchat",
-    "Twitch",
-    "Reddit",
-    "Podcasts",
-    "Clubhouse"
-  ];
-
-  final List<String> audienceSizeOptions = [
-    "1k-10k",
-    "10k-50k",
-    "50k-100k",
-    "100k+"
-  ];
 
   // Selected options
   final Set<String> selectedNiche = {};
-  final Set<String> selectedPlatformFocus = {};
-  final Set<String> selectedAudienceSize = {};
 
   void toggleSelection(String option, Set<String> selectedSet) {
     setState(() {
@@ -67,27 +42,23 @@ class _AudienceForInfluencerState extends State<AudienceForInfluencer> {
   }
 
   Future<void> _saveData(String userId) async {
-    if (selectedNiche.isEmpty &&
-        selectedPlatformFocus.isEmpty &&
-        selectedAudienceSize.isEmpty) {
+    if (selectedNiche.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please select at least one option.")),
       );
       return;
     }
 
-    await _firestore.collection('users').doc('$userId').collection('intrest').doc('Audience').set({
+    await _firestore.collection('users').doc('$userId').collection('details').doc('Model Niche').set({
       "niches": selectedNiche.toList(),
-      "platform_focus": selectedPlatformFocus.toList(),
-      "audience_size": selectedAudienceSize.toList(),
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Audience for influencer details saved successfully!")),
+      SnackBar(content: Text("Model Niche details saved successfully!")),
     );
 
     // Navigate to the next page (if applicable)
-    Navigator.push(context, MaterialPageRoute(builder: (context) => PassionPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Model2()));
   }
 
   @override
@@ -109,29 +80,21 @@ class _AudienceForInfluencerState extends State<AudienceForInfluencer> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Let's personalize your profile!",
+              "Model Niche",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Text(
-              "Tell us about your interests and niche to find the best matches for you.",
+              "choose one or more model Niche",
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 20),
-            _buildSectionTitle("Niche"),
             _buildChipGroup(nicheOptions, selectedNiche),
-            SizedBox(height: 30),
-            _buildSectionTitle("Platform Focus"),
-            _buildChipGroup(platformFocusOptions, selectedPlatformFocus),
-            SizedBox(height: 30),
-            _buildSectionTitle("Audience Size"),
-            _buildChipGroup(audienceSizeOptions, selectedAudienceSize),
-            SizedBox(height:50),
+            SizedBox(height: 410),
             ElevatedButton(
-              onPressed: () => _saveData(userId),
+              onPressed: () => _saveData(userId), // Save role on click
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Color(0xFF081B48),
+                padding: EdgeInsets.symmetric(vertical: 15), backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -149,17 +112,10 @@ class _AudienceForInfluencerState extends State<AudienceForInfluencer> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-    );
-  }
-
   Widget _buildChipGroup(List<String> options, Set<String> selectedSet) {
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 10,
+      runSpacing: 10,
       children: options.map((option) {
         bool isSelected = selectedSet.contains(option);
         return GestureDetector(

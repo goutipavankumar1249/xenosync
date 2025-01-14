@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
       // Login successful
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => RoleSelectionPage()), // Replace with your HomePage
+        MaterialPageRoute(builder: (context) => UploadImagesPage()), // Replace with your HomePage
       );
     } on FirebaseAuthException catch (e) {
       // Handle login errors

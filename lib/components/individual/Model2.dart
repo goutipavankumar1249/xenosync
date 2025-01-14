@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:login_app/components/individual/NarrowInfluencer.dart';
@@ -11,13 +12,13 @@ class Model2 extends StatefulWidget {
 
 class _Model2State extends State<Model2> {
   String? selectedRole; // Store the selected role
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.reference(); // Firebase reference
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firebase reference
 
   void saveRoleToFirebase(String userId) async {
     if (selectedRole != null) {
       // Save the selected role to Firebase under the userId
-      await databaseRef.child('users/$userId').update({
-        'model2_role': selectedRole, // Add/update the role
+      await _firestore.collection('users').doc('$userId').collection('details').doc('collaborate').set({
+        'collaborate with': selectedRole, // Add/update the role
       });
 
       ScaffoldMessenger.of(context).showSnackBar(

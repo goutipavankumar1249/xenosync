@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:login_app/components/individual/AudienceForInfluencer.dart';
@@ -16,7 +16,7 @@ class _DetailsForInfluencerState extends State<DetailsForInfluencer> {
   final _formKey = GlobalKey<FormState>();
   String? fullName, dateOfBirth, location, instagramHandle, phoneNumber;
   File? _imageFile;
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.reference();
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
@@ -42,13 +42,16 @@ class _DetailsForInfluencerState extends State<DetailsForInfluencer> {
       }
 
       // Save data to Firebase Realtime Database
-      await databaseRef.child("users/$userId/influencer data").set({
+      await firestore.collection('users').doc('$userId').collection('intrest').doc('basic details').set({
         "full_name": fullName,
         "date_of_birth": dateOfBirth,
         "location": location,
         "instagram_handle": instagramHandle,
         "phone_number": phoneNumber,
         "image_url": imageUrl,
+      });
+      await firestore.collection('users').doc('$userId').collection('posts').doc('images').set({
+        "image_url": imageUrl
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
