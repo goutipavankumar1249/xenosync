@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:login_app/components/individual/PassionPage.dart';
@@ -10,7 +11,7 @@ class NicheForBrand extends StatefulWidget {
 }
 
 class _NicheForBrandState extends State<NicheForBrand> {
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.reference();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Options for Campaign Type and Influencer Niche
   final List<String> campaignTypeOptions = [
@@ -66,7 +67,7 @@ class _NicheForBrandState extends State<NicheForBrand> {
       return;
     }
 
-    await databaseRef.child("users/$userId").set({
+    await _firestore.collection('users').doc('$userId').collection('intrest').doc('Audience').set({
       "campaign_types": selectedCampaignTypes.toList(),
       "influencer_niches": selectedInfluencerNiches.toList(),
     });

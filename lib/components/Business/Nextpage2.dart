@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:login_app/components/Business/Brand.dart';
-import 'package:login_app/components/SplashScreen.dart';
 import 'package:provider/provider.dart';
 import '../UserState.dart';
+import 'AgencyNiche.dart';
+import 'BrandNiche.dart';
+import 'ProductionType.dart';
 
 class NextPage2 extends StatefulWidget {
   @override
@@ -12,15 +14,15 @@ class NextPage2 extends StatefulWidget {
 
 class _NextPage2State extends State<NextPage2> {
   String? selectedRole; // Store the selected role
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.reference(); // Firebase reference
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firebase reference
 
 
 
   void saveRoleToFirebase(String userId) async {
     if (selectedRole != null) {
       // Save the selected role to Firebase under the userId
-      await databaseRef.child('users/$userId').update({
-        'indi_role': selectedRole, // Add/update the role
+      await _firestore.collection('users').doc('$userId').collection('details').doc('$selectedRole').set({
+        'individual': selectedRole, // Add/update the role
       });
 
       // Navigate to the next page (if applicable)
@@ -32,6 +34,25 @@ class _NextPage2State extends State<NextPage2> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Role saved successfully!")),
       );
+
+      // Navigate to a specific page based on the role
+      if (selectedRole == "Model") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BrandNiche()), // Navigate to IndividualPage
+        );
+      } else if (selectedRole == "Influencer") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AgencyNiche()), // Navigate to BusinessPage
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>
+              ProductionType()), // Navigate to BusinessPage
+        );
+      }
 
     } else {
       // Show a snackbar if no role is selected
@@ -94,26 +115,6 @@ class _NextPage2State extends State<NextPage2> {
               ),
             ),
             GestureDetector(
-              onTap: () => setState(() => selectedRole = "Production House"),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                margin: EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color:
-                    selectedRole == "Production House" ? Colors.blue : Colors.black,
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Center(
-                  child: Text(
-                    "Productive House",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-            ),
-            GestureDetector(
               onTap: () => setState(() => selectedRole = "Agency"),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15),
@@ -128,6 +129,26 @@ class _NextPage2State extends State<NextPage2> {
                 child: Center(
                   child: Text(
                     "Agency",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () => setState(() => selectedRole = "Production House"),
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                margin: EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color:
+                    selectedRole == "Production House" ? Colors.blue : Colors.black,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Center(
+                  child: Text(
+                    "Productive House",
                     style: TextStyle(fontSize: 18),
                   ),
                 ),

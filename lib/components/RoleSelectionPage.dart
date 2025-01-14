@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:login_app/components/Business/Nextpage2.dart';
 import 'package:login_app/components/SplashScreen.dart';
 import 'package:login_app/components/individual/NextPage.dart';
@@ -14,7 +14,7 @@ class RoleSelectionPage extends StatefulWidget {
 
 class _RoleSelectionPageState extends State<RoleSelectionPage> {
   String? selectedRole; // To store the selected role
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.ref();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void saveRoleToFirebase() async {
     final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -23,7 +23,11 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
       final String userId = currentUser.uid; // Get the current user's ID
 
       // Save the role to Firebase
-      await databaseRef.child('users/${currentUser.uid}/role').set(selectedRole);
+      await _firestore.collection('users').doc(userId).update(
+        {
+          'role': selectedRole,
+        },
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Role saved successfully!")),
       );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:login_app/components/individual/AudienceForInfluencer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:login_app/components/individual/DetailsForInfluencer.dart';
 import 'package:provider/provider.dart';
 import '../UserState.dart';
@@ -11,25 +10,25 @@ class NarrowInfluencer extends StatefulWidget {
 }
 
 class _NarrowInfluencerState extends State<NarrowInfluencer> {
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.reference();
+  // Firestore reference
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // Options
   final List<String> nicheOptions = [
     "Influencers",
     "Bloggers",
     "Podcasters",
-    "Life style",
-    "Life style",
-    "Life style",
-    "Life style"
+    "Life Style",
+    "Life Style",
+    "Life Style",
+    "Life Style"
   ];
 
-  final List<String> Available = [
+  final List<String> availableOptions = [
     "Instagram",
     "Facebook",
     "LinkedIn",
     "Pinterest",
-    "Instagram",
     "Youtube",
     "Snapchat",
     "Twitch",
@@ -38,6 +37,7 @@ class _NarrowInfluencerState extends State<NarrowInfluencer> {
   ];
 
   final List<String> audienceSizeOptions = [
+    "<1k",
     "1k-10k",
     "10k-50k",
     "50k-100k",
@@ -48,6 +48,9 @@ class _NarrowInfluencerState extends State<NarrowInfluencer> {
   final Set<String> selectedNiche = {};
   final Set<String> selectedAvailable = {};
   final Set<String> selectedAudienceSize = {};
+
+  // Bio controller
+  final TextEditingController bioController = TextEditingController();
 
   void toggleSelection(String option, Set<String> selectedSet) {
     setState(() {
@@ -62,17 +65,19 @@ class _NarrowInfluencerState extends State<NarrowInfluencer> {
   Future<void> _saveData(String userId) async {
     if (selectedNiche.isEmpty &&
         selectedAvailable.isEmpty &&
-        selectedAudienceSize.isEmpty) {
+        selectedAudienceSize.isEmpty &&
+        bioController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select at least one option.")),
+        SnackBar(content: Text("Please select at least one option and enter your bio.")),
       );
       return;
     }
 
-    await databaseRef.child("users/$userId").set({
+    await firestore.collection("users").doc(userId).collection('intrest').doc('narrowinfluencer').set({
       "niches": selectedNiche.toList(),
-      "availble": selectedAvailable.toList(),
+      "available": selectedAvailable.toList(),
       "audience_size": selectedAudienceSize.toList(),
+      "bio": bioController.text,
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -80,7 +85,10 @@ class _NarrowInfluencerState extends State<NarrowInfluencer> {
     );
 
     // Navigate to the next page (if applicable)
-    Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsForInfluencer()));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DetailsForInfluencer()),
+    );
   }
 
   @override
@@ -107,7 +115,7 @@ class _NarrowInfluencerState extends State<NarrowInfluencer> {
             ),
             SizedBox(height: 10),
             Text(
-              "choose one or more collaboration types.",
+              "Choose one or more collaboration types.",
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 20),
@@ -115,11 +123,23 @@ class _NarrowInfluencerState extends State<NarrowInfluencer> {
             _buildChipGroup(nicheOptions, selectedNiche),
             SizedBox(height: 30),
             _buildSectionTitle("Available On"),
-            _buildChipGroup(Available, selectedAvailable),
+            _buildChipGroup(availableOptions, selectedAvailable),
             SizedBox(height: 30),
             _buildSectionTitle("Audience Size"),
             _buildChipGroup(audienceSizeOptions, selectedAudienceSize),
-            SizedBox(height: 220),
+            SizedBox(height: 30),
+            _buildSectionTitle("Bio"),
+            TextField(
+              controller: bioController,
+              decoration: InputDecoration(
+                hintText: "Enter your bio...",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              maxLines: 4,
+            ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => _saveData(userId),
               style: ElevatedButton.styleFrom(
@@ -135,10 +155,6 @@ class _NarrowInfluencerState extends State<NarrowInfluencer> {
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
-            ),
-            Text(
-              "Bio",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],
         ),
