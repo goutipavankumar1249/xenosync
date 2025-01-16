@@ -17,8 +17,6 @@ class _DetailsForInfluencerState extends State<DetailsForInfluencer> {
   String? fullName, dateOfBirth, location, instagramHandle, phoneNumber;
   File? _imageFile;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final ImagePicker _picker = ImagePicker();
-
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -27,6 +25,8 @@ class _DetailsForInfluencerState extends State<DetailsForInfluencer> {
       });
     }
   }
+
+  final ImagePicker _picker = ImagePicker();
 
   Future<void> _saveData(String userId) async {
     if (_formKey.currentState!.validate()) {
