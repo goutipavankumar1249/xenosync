@@ -59,6 +59,108 @@
 // }
 
 
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+//
+// import 'interaction.dart';
+// import 'interaction_service.dart';
+//
+// class YouLikedScreen extends StatelessWidget {
+//   final InteractionService _interactionService = InteractionService();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return StreamBuilder<List<UserInteraction>>(
+//       stream: _interactionService.getLikedUsersStream(),
+//       builder: (context, snapshot) {
+//         if (snapshot.hasError) {
+//           return Center(child: Text('Something went wrong'));
+//         }
+//
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return Center(child: CircularProgressIndicator());
+//         }
+//
+//         final interactions = snapshot.data ?? [];
+//         print('you liked screen data $interactions');
+//
+//
+//         return Expanded(
+//           child: interactions.isEmpty
+//               ? Center(child: Text('You haven\'t liked anyone yet'))
+//               : ListView.builder(
+//             itemCount: interactions.length,
+//             itemBuilder: (context, index) {
+//               final interaction = interactions[index];
+//               return Padding(
+//                 padding: const EdgeInsets.only(bottom: 10),
+//                 child: _buildProfileCard(
+//                   context,
+//                   interaction.userName,
+//                   interaction.userImage,
+//                   Colors.orange[100],
+//                   "You liked ${interaction.userName}",
+//                 ),
+//               );
+//             },
+//           ),
+//         );
+//       },
+//     );
+//   }
+//
+//   Widget _buildProfileCard(BuildContext context, String userName, String userImage,
+//       Color? backgroundColor, String message) {
+//     return Container(
+//       padding: EdgeInsets.all(10),
+//       width: MediaQuery.of(context).size.width,
+//       height: 55,
+//       decoration: BoxDecoration(
+//         color: backgroundColor,
+//         borderRadius: BorderRadius.circular(24),
+//       ),
+//       child: Row(
+//         children: [
+//           Container(
+//             width: 45,
+//             height: 45,
+//             decoration: BoxDecoration(
+//               shape: BoxShape.circle,
+//               image: DecorationImage(
+//                 image: userImage.isNotEmpty
+//                     ? NetworkImage(userImage)
+//                     : AssetImage('assets/images/default_avatar.png') as ImageProvider,
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//           SizedBox(width: 10),
+//           Expanded(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Text(
+//                   message,
+//                   style: TextStyle(
+//                     fontFamily: 'Montserrat',
+//                     fontSize: 16,
+//                     fontWeight: FontWeight.w400,
+//                     color: Colors.black,
+//                   ),
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -81,27 +183,27 @@ class YouLikedScreen extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
 
+        // Handle empty data gracefully
         final interactions = snapshot.data ?? [];
+        if (interactions.isEmpty) {
+          return Center(child: Text('You haven\'t liked anyone yet'));
+        }
 
-        return Expanded(
-          child: interactions.isEmpty
-              ? Center(child: Text('You haven\'t liked anyone yet'))
-              : ListView.builder(
-            itemCount: interactions.length,
-            itemBuilder: (context, index) {
-              final interaction = interactions[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: _buildProfileCard(
-                  context,
-                  interaction.userName,
-                  interaction.userImage,
-                  Colors.orange[100],
-                  "You liked ${interaction.userName}",
-                ),
-              );
-            },
-          ),
+        return ListView.builder(
+          itemCount: interactions.length,
+          itemBuilder: (context, index) {
+            final interaction = interactions[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildProfileCard(
+                context,
+                interaction.userName,
+                interaction.userImage,
+                Colors.orange[100],
+                "You liked ${interaction.userName}",
+              ),
+            );
+          },
         );
       },
     );
@@ -119,6 +221,7 @@ class YouLikedScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // Handle empty user image gracefully
           Container(
             width: 45,
             height: 45,
@@ -127,7 +230,7 @@ class YouLikedScreen extends StatelessWidget {
               image: DecorationImage(
                 image: userImage.isNotEmpty
                     ? NetworkImage(userImage)
-                    : AssetImage('assets/default_avatar.png') as ImageProvider,
+                    : AssetImage('assets/images/default_avatar.png') as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),

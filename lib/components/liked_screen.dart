@@ -59,7 +59,6 @@
 // }
 
 import 'package:flutter/material.dart';
-
 import 'interaction.dart';
 import 'interaction_service.dart';
 
@@ -81,25 +80,23 @@ class LikedScreen extends StatelessWidget {
 
         final interactions = snapshot.data ?? [];
 
-        return Expanded(
-          child: interactions.isEmpty
-              ? Center(child: Text('No likes yet'))
-              : ListView.builder(
-            itemCount: interactions.length,
-            itemBuilder: (context, index) {
-              final interaction = interactions[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: _buildProfileCard(
-                  context,
-                  interaction.userName,
-                  interaction.userImage,
-                  Colors.blue[100],
-                  "${interaction.userName} liked your profile",
-                ),
-              );
-            },
-          ),
+        return interactions.isEmpty
+            ? Center(child: Text('No likes yet'))
+            : ListView.builder(
+          itemCount: interactions.length,
+          itemBuilder: (context, index) {
+            final interaction = interactions[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildProfileCard(
+                context,
+                interaction.userName,
+                interaction.userImage,
+                Colors.blue[100],
+                "${interaction.userName} liked your profile",
+              ),
+            );
+          },
         );
       },
     );
@@ -125,28 +122,22 @@ class LikedScreen extends StatelessWidget {
               image: DecorationImage(
                 image: userImage.isNotEmpty
                     ? NetworkImage(userImage)
-                    : AssetImage('assets/default_avatar.png') as ImageProvider,
+                    : AssetImage('assets/images/default_avatar.png') as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),
           ),
           SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  message,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+            child: Text(
+              message,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

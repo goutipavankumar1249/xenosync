@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:login_app/components/LoginPage.dart';
 import 'dart:async';
 
 import 'package:login_app/components/RoleSelectionPage.dart';
 import 'package:login_app/components/SignUpPage.dart';
+import 'package:login_app/components/mainHomePage.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -43,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void _navigateToNextScreen() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SignUpPage()), // Replace with your next screen
+      MaterialPageRoute(builder: (context) => LoginPage()), // Replace with your next screen
     );
   }
 

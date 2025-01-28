@@ -36,19 +36,10 @@ class _DetailsForBrandState extends State<DetailsForBrand> {
       // Upload image to Firebase Storage
       String? imageUrl;
       if (_imageFile != null) {
-        final storageRef = FirebaseStorage.instance.ref().child("brands/$userId/brand_image.jpg");
+        final storageRef = FirebaseStorage.instance.ref().child("users/$userId/profile_image");
         await storageRef.putFile(_imageFile!);
         imageUrl = await storageRef.getDownloadURL();
       }
-
-      // Save data to Firebase Realtime Database
-      // await databaseRef.child("users/$userId/brand_details").set({
-      //   "brand_name": brandName,
-      //   "establishment_date": establishmentDate,
-      //   "location": location,
-      //   "instagram_handle": instagramHandle,
-      //   "image_url": imageUrl,
-      // });
       await _firestore.collection('users').doc('$userId').collection('intrest').doc('basic details').set({
         "brand_name": brandName,
         "establishment_date": establishmentDate,

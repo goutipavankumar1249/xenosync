@@ -36,7 +36,7 @@ class _DetailsForInfluencerState extends State<DetailsForInfluencer> {
       String? imageUrl;
       if (_imageFile != null) {
         final storageRef =
-        FirebaseStorage.instance.ref().child("influencers/$userId/profile_image.jpg");
+        FirebaseStorage.instance.ref().child("users/$userId/profile_image");
         await storageRef.putFile(_imageFile!);
         imageUrl = await storageRef.getDownloadURL();
       }

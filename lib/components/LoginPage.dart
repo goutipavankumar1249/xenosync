@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_app/components/Business/DetailsForBrand.dart';
-import 'package:login_app/components/HomePage.dart';
+import 'package:login_app/components/mainHomePage.dart';
 import 'package:login_app/components/RoleSelectionPage.dart';
 import 'package:login_app/components/SplashScreen.dart';
 import 'package:login_app/components/individual/AudienceForInfluencer.dart';
@@ -9,6 +9,7 @@ import 'package:login_app/components/individual/DetailsForInfluencer.dart';
 import 'package:login_app/components/Business/NicheForBrand.dart';
 import 'package:login_app/components/individual/NarrowInfluencer.dart';
 import 'package:login_app/components/individual/PassionPage.dart';
+import 'package:login_app/main.dart';
 import 'package:provider/provider.dart';
 import 'SignUpPage.dart';
 import 'UploadImagesPage.dart';
@@ -44,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       // Login successful
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => mainHomePage()), // Replace with your HomePage
+        MaterialPageRoute(builder: (context) => MainHomePage()), // Replace with your HomePage
       );
     } on FirebaseAuthException catch (e) {
       // Handle login errors

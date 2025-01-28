@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:login_app/components/EditProfilePage.dart';
+import 'package:login_app/components/verify/UserVerificationPage.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
 import 'UserState.dart';
@@ -35,37 +37,47 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _saveProfileData(String userId) async {
-    String? uploadedImageUrl;
-    if (_imageFile != null) {
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child("influencers/$userId/profile_image.jpg");
-      await storageRef.putFile(_imageFile!);
-      uploadedImageUrl = await storageRef.getDownloadURL();
-    }
-
-    await firestore
-        .collection('users')
-        .doc(userId)
-        .collection('intrest')
-        .doc('basic details')
-        .set({
-      "full_name": fullName,
-      "date_of_birth": dateOfBirth,
-      "location": location,
-      "instagram_handle": instagramHandle,
-      "phone_number": phoneNumber,
-      "image_url": uploadedImageUrl ?? imageUrl,
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Profile updated successfully!")),
-    );
-  }
+  // Future<void> _saveProfileData(String userId) async {
+  //   String? uploadedImageUrl;
+  //   if (_imageFile != null) {
+  //     final storageRef = FirebaseStorage.instance
+  //         .ref()
+  //         .child("influencers/$userId/profile_image.jpg");
+  //     await storageRef.putFile(_imageFile!);
+  //     uploadedImageUrl = await storageRef.getDownloadURL();
+  //   }
+  //
+  //   await firestore
+  //       .collection('users')
+  //       .doc(userId)
+  //       .collection('intrest')
+  //       .doc('basic details')
+  //       .set({
+  //     "full_name": fullName,
+  //     "date_of_birth": dateOfBirth,
+  //     "location": location,
+  //     "instagram_handle": instagramHandle,
+  //     "phone_number": phoneNumber,
+  //     "image_url": uploadedImageUrl ?? imageUrl,
+  //   });
+  //
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text("Profile updated successfully!")),
+  //   );
+  // }
 
   Future<Map<String, dynamic>> _fetchProfileData(String userId) async {
     try {
+      final bioSnapshot = await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('intrest')
+          .doc('narrowinfluencer')
+          .get();
+
+      final data = bioSnapshot.data();
+      bio = data?['bio'];
+
       final userDoc = await firestore
           .collection('users')
           .doc(userId)
@@ -74,6 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
           .get();
       if (userDoc.exists) {
         return userDoc.data() ?? {};
+
       } else {
         return {};
       }
@@ -105,9 +118,6 @@ class _ProfilePageState extends State<ProfilePage> {
     String userId = Provider.of<UserState>(context).userId;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Xeno Sync'),
-      ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _fetchProfileData(userId),
         builder: (context, snapshot) {
@@ -181,7 +191,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 8),
                           OutlinedButton(
-                            onPressed: () => _saveProfileData(userId),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => EditProfilePage(userId: userId,)),
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xFF081B48)),
                               shape: RoundedRectangleBorder(
@@ -190,6 +205,29 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             child: const Text(
                               'Edit Profile',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFF081B48),
+                              ),
+                            ),
+                          ),
+                          OutlinedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => UserVerificationPage(userId: userId,)),
+                              );
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xFF081B48)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'verify',
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 12,
