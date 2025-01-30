@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login_app/Chatfeature/ChatListPage.dart';
 import 'package:login_app/Chatfeature/ChatScreen.dart';
 import 'package:login_app/components/MatchesScreen.dart';
+import 'package:login_app/components/agreement/agreement_list_page.dart';
 import 'package:login_app/pages/feed_page.dart';
 import 'Profile_page.dart';
 
@@ -17,8 +18,9 @@ class _MainHomePageState extends State<MainHomePage> {
   final List<Widget> _pages = [
     FeedPage(), // Replace placeholder with FeedPage component
     MatchesScreen(), // Replace placeholder with MatchesScreen component
-    ChatListPage(currentUserId: FirebaseAuth.instance.currentUser!.uid,),
+    ChatListPage(currentUserId: FirebaseAuth.instance.currentUser!.uid),
     //const Center(child: Text('Chat Page', style: TextStyle(fontSize: 24))),
+    AgreementListPage(currentUserId: FirebaseAuth.instance.currentUser!.uid),
     ProfilePage(), // Replace placeholder with ProfilePage component
   ];
 
@@ -55,6 +57,10 @@ class _MainHomePageState extends State<MainHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
             label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Agreement',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

@@ -29,6 +29,7 @@
 //     }
 //   }
 //
+//
 //   void sendMessage(String message) async {
 //     if (message.trim().isEmpty) return;
 //
@@ -41,25 +42,11 @@
 //       'timestamp': FieldValue.serverTimestamp(),
 //     };
 //
-//     // Save message in Firestore
 //     await FirebaseFirestore.instance
 //         .collection('chats')
 //         .doc(chatRoomId)
 //         .collection('messages')
 //         .add(messageData);
-//
-//     // Update last message in both users' chat lists
-//     // final userChats = FirebaseFirestore.instance.collection('matches');
-//     //
-//     // await userChats.doc(chatRoomId).set({
-//     //   'users': [widget.currentUserId, widget.receiverId],
-//     //   'userDetails': {
-//     //     widget.currentUserId: {'name': FirebaseAuth.instance.currentUser?.displayName ?? "You"},
-//     //     widget.receiverId: {'name': widget.receiverName},
-//     //   },
-//     //   'lastMessage': message.trim(),
-//     //   'lastMessageTime': FieldValue.serverTimestamp(),
-//     // }, SetOptions(merge: true));
 //
 //     _messageController.clear();
 //   }
@@ -85,13 +72,21 @@
 //                   .orderBy('timestamp', descending: true)
 //                   .snapshots(),
 //               builder: (context, snapshot) {
-//                 if (!snapshot.hasData) {
+//                 if (snapshot.connectionState == ConnectionState.waiting) {
 //                   return const Center(child: CircularProgressIndicator());
+//                 }
+//
+//                 if (snapshot.hasError) {
+//                   return const Center(child: Text("Something went wrong!"));
+//                 }
+//
+//                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+//                   return const Center(child: Text("No messages yet."));
 //                 }
 //
 //                 final messages = snapshot.data!.docs;
 //
-//                 ListView.builder(
+//                 return ListView.builder(
 //                   reverse: true,
 //                   itemCount: messages.length,
 //                   itemBuilder: (context, index) {
@@ -104,7 +99,7 @@
 //                         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
 //                         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
 //                         decoration: BoxDecoration(
-//                           color: isMe ? Colors.lightGreen[200] : Colors.white,
+//                           color: isMe ? Colors.greenAccent : Colors.white,
 //                           borderRadius: BorderRadius.only(
 //                             topLeft: const Radius.circular(12),
 //                             topRight: const Radius.circular(12),
@@ -120,11 +115,12 @@
 //                           ],
 //                         ),
 //                         child: Column(
-//                           crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+//                           crossAxisAlignment:
+//                           isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
 //                           children: [
 //                             Text(
 //                               message['message'],
-//                               style: TextStyle(
+//                               style: const TextStyle(
 //                                 color: Colors.black87,
 //                                 fontSize: 16,
 //                               ),
@@ -149,7 +145,6 @@
 //                     );
 //                   },
 //                 );
-//
 //               },
 //             ),
 //           ),
@@ -172,7 +167,7 @@
 //                 ),
 //                 const SizedBox(width: 8),
 //                 IconButton(
-//                   icon: Icon(Icons.send, color: Colors.pinkAccent),
+//                   icon: const Icon(Icons.send, color: Colors.blueAccent),
 //                   onPressed: () => sendMessage(_messageController.text),
 //                 ),
 //               ],
@@ -183,11 +178,12 @@
 //     );
 //   }
 // }
-
+//
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../components/agreement/send_agreement_page.dart'; // Import the Agreement Page
 
 class ChatScreen extends StatefulWidget {
   final String currentUserId;
@@ -215,7 +211,6 @@ class _ChatScreenState extends State<ChatScreen> {
       return "${user2}_$user1";
     }
   }
-
 
   void sendMessage(String message) async {
     if (message.trim().isEmpty) return;
@@ -246,10 +241,27 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Text(widget.receiverName),
         backgroundColor: Colors.blue[100],
+        actions: [
+          // Agreement Button in Top Right Corner
+          IconButton(
+            icon: Icon(Icons.assignment, color: Colors.blue), // Agreement Icon
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SendAgreementPage(
+                    currentUserId: widget.currentUserId,  // Logged-in user
+                    receiverId: widget.receiverId,  // The user they are chatting with
+                  ),
+                ),
+              );
+            },
+          ),
+
+        ],
       ),
       body: Column(
         children: [
-          // Messages List
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -319,7 +331,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   (message['timestamp'] as Timestamp).millisecondsSinceEpoch)
                                   .toLocal()
                                   .toString()
-                                  .substring(11, 16) // Displays time in HH:mm format
+                                  .substring(11, 16)
                                   : "Sending...",
                               style: TextStyle(
                                 color: Colors.grey[600],
@@ -365,4 +377,3 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
-
