@@ -113,6 +113,15 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> boostProfile(String userId) async {
+    final boostDuration = Duration(hours: 24); // Boost for 24 hours
+    final boostedUntil = Timestamp.fromDate(DateTime.now().add(boostDuration));
+
+    await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      'boostedUntil': boostedUntil,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     String userId = Provider.of<UserState>(context).userId;
@@ -214,12 +223,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           OutlinedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => UserVerificationPage(userId: userId,)),
-                              );
-                            },
+                            // onPressed: () {
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(builder: (context) => UserVerificationPage(userId: userId,)),
+                            //   );
+                            // },
+                            onPressed: () => boostProfile(userId),
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xFF081B48)),
                               shape: RoundedRectangleBorder(

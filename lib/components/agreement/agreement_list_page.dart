@@ -76,9 +76,7 @@ class AgreementListPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => AgreementDetailPage(
-                          currentUserId: currentUserId,
-                          user1Id: user1Id,
-                          user2Id: user2Id,
+                          agreementDetails: agreement['agreementDetails'],
                           agreementId: agreementId,
                           status: status,
                         ),

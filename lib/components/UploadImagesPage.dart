@@ -202,7 +202,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:login_app/pages/home_page.dart';
+import 'package:login_app/components/MainHomePage.dart';
 import 'package:provider/provider.dart';
 import 'ImageDetailPage.dart';
 import 'UserState.dart';
@@ -374,7 +374,7 @@ class _UploadImagesPageState extends State<UploadImagesPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => MainHomePage()),
                 );
               },
               style: ElevatedButton.styleFrom(

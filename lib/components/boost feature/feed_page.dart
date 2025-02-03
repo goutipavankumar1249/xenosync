@@ -769,7 +769,7 @@ import 'package:login_app/Chatfeature/ChatListPage.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../components/interaction_service.dart';
+import '../interaction_service.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -778,11 +778,14 @@ class FeedPage extends StatefulWidget {
 
 
 
+
 class _FeedPageState extends State<FeedPage> {
 
   List<SwipeItem> swipeItems = [];
   List<Map<String, dynamic>> allDocuments = [];
   List<Map<String, dynamic>> allDocsForIntrest = [];
+  List<String> aboutMe = [];
+  List<String> passions = [];
   MatchEngine? matchEngine;
   bool isLoading = true;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -793,6 +796,7 @@ class _FeedPageState extends State<FeedPage> {
     super.initState();
     _loadUserFeeds();
   }
+  final InteractionService _interactionService = InteractionService();
 
   Future<void> _fetchData(String feeduserId) async {
     try {
@@ -854,60 +858,62 @@ class _FeedPageState extends State<FeedPage> {
     }
 
     try {
-      // Get all users except the current user
-      final usersSnapshot = await _firestore
+      // Fetch boosted users (active boosts only)
+      final boostedUsersQuery = await _firestore
           .collection('users')
-          .where(FieldPath.documentId, isNotEqualTo: currentUserId)
+          .where('boostedUntil', isGreaterThan: Timestamp.now()) // Active boosts only
+          .orderBy('boostedUntil', descending: true) // Most recently boosted first
           .get();
 
+      print('Boosted user IDs: ${boostedUsersQuery.docs.map((doc) => doc.id).toList()}');
 
-      List<Future<Map>> userFeedsFutures = usersSnapshot.docs.map((userDoc) async {
-        final feeduserId = userDoc.id; // Extract userId from userDoc
-        print('the feeduserId is $feeduserId');
-        _fetchData(feeduserId);
+      // Fetch all users except the current user
+      final allUsersQuery = await _firestore
+          .collection('users')
+          .where(FieldPath.documentId, isNotEqualTo: currentUserId) // Exclude self
+          .get();
 
-        try {
-          // Get user profile data
-          final userData = userDoc.data();
-          print('userdata is $userData');
-          // Get user's feed posts
-          final feedSnapshot = await _firestore
-              .collection('users')
-              .doc(userDoc.id)
-              .collection('feed')
-              .orderBy('uploadedAt', descending: true)
-              .get();
-          print('feedsnapshot is $feedSnapshot');
+      // Get boosted user IDs for filtering
+      final boostedUserIds = boostedUsersQuery.docs.map((doc) => doc.id).toSet();
 
-          final profileSnapshot = await _firestore
-                .collection('users')
-                .doc(userDoc.id)
-                .collection('intrest')
-                .doc('basic details')
-                .get();
-          print('profile Snapshot $profileSnapshot');
+      // Filter normal users (excluding boosted ones)
+      final normalUsers = allUsersQuery.docs.where((doc) => !boostedUserIds.contains(doc.id));
 
-          if (feedSnapshot.docs.isNotEmpty && profileSnapshot.exists) {
-            final data =  profileSnapshot.data();
-            print('data in the profilesnapshot is $data');
-            return {
-              'userId': userDoc.id,
-              'name': userData['username'] ?? 'Unknown',
-              'age': userData['age']?.toString() ?? '',
-              'location': data?['location'] ?? '',
-              'profileImage': data?['image_url'] ?? '', // Add profile image here
-              'posts': feedSnapshot.docs.map((doc) => {
-                'postId': doc.id,
-                'imageUrl': doc.data()['imageUrl'] ?? '',
-                'description': doc.data()['description'] ?? '',
-                'uploadedAt': doc.data()['uploadedAt'],
-              }).toList(),
-            };
-          }
-        } catch (e) {
-          print('Error loading feed for user ${userDoc.id}: $e');
+      // Merge: Boosted users first, then normal users
+      final List<QueryDocumentSnapshot> sortedUsers = [
+        ...boostedUsersQuery.docs, // Boosted users first
+        ...normalUsers, // Normal users follow
+      ];
+
+      List<Future<Map>> userFeedsFutures = sortedUsers.map((userDoc) async {
+        final userId = userDoc.id;
+        print('Processing user: $userId');
+
+        // Fetch user details
+        final userNameSnapshot = await _firestore.collection('users').doc(userId).get();
+        final passionSnapshot = await _firestore.collection('users').doc(userId).collection('intrest').doc('passion').get();
+        final feedSnapshot = await _firestore.collection('users').doc(userId).collection('feed').get();
+
+        // Extract passions if available
+        List<String> passions = [];
+        if (passionSnapshot.exists && passionSnapshot.data()!.containsKey('passion')) {
+          passions = List<String>.from(passionSnapshot['passion']);
         }
-        return {};
+
+        // Extract posts
+        List<Map<String, dynamic>> posts = feedSnapshot.docs.map((doc) => {
+          'postId': doc.id,
+          'imageUrl': doc.data()['imageUrl'] ?? '',
+          'description': doc.data()['description'] ?? '',
+          'uploadedAt': doc.data()['uploadedAt'],
+        }).toList();
+
+        return {
+          'userName': userNameSnapshot.data()?['username'],
+          'userId': userId,
+          'posts': posts,
+          'passions': passions,
+        };
       }).toList();
 
       final userFeeds = await Future.wait(userFeedsFutures);
@@ -922,16 +928,15 @@ class _FeedPageState extends State<FeedPage> {
             content: userFeed,
             likeAction: () => _handleLike(userFeed['userId']),
             nopeAction: () => _handleNope(userFeed['userId']),
-
           ))
               .toList();
 
-          // Randomize the order of the swipe items
-          swipeItems.shuffle();
+          // ✅ Do NOT shuffle the list, so boosted users stay at the top
           matchEngine = MatchEngine(swipeItems: swipeItems);
           isLoading = false;
         });
       }
+
     } catch (e) {
       print('Error loading feeds: $e');
       if (mounted) {
@@ -944,45 +949,6 @@ class _FeedPageState extends State<FeedPage> {
       }
     }
   }
-  final InteractionService _interactionService = InteractionService();
-  // Future<void> _handleLike(String userId) async {
-  //   try {
-  //     final userFeed = swipeItems
-  //         .firstWhere((item) => (item.content as Map<String, dynamic>)['userId'] == userId)
-  //         .content as Map<String, dynamic>;
-  //     print('userfeed of like $userFeed');
-  //     await _interactionService.recordLike(
-  //       userId,
-  //       userFeed['name'] ?? 'Unknown',
-  //       userFeed['profileImage'] ?? '',
-  //     );
-  //
-  //     // Check for match
-  //     final otherUserLike = await _firestore
-  //         .collection('users')
-  //         .doc(userId)
-  //         .collection('liked_by')
-  //         .doc(currentUserId)
-  //         .get();
-  //
-  //     if (otherUserLike.exists) {
-  //       await _createMatch(userId);
-  //       _showMatchDialog(userId);
-  //     }
-  //     // Remove the liked user from the swipe items list
-  //     setState(() {
-  //       swipeItems.removeWhere((item) => (item.content as Map<String,dynamic>)['userId'] == userId);
-  //       matchEngine = MatchEngine(swipeItems: swipeItems);
-  //     });
-  //   } catch (e) {
-  //     print('Error handling like: $e');
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Failed to like profile. Please try again.')),
-  //       );
-  //     }
-  //   }
-  // }
 
   Future<void> _handleNope(String userId) async {
     try {
@@ -1037,35 +1003,6 @@ class _FeedPageState extends State<FeedPage> {
       }
     }
   }
-
-  // Future<void> _handleMatchAndRemove(String userId) async {
-  //   try {
-  //     print('match and remove function is called');
-  //     final otherUserLike = await _firestore
-  //         .collection('users')
-  //         .doc(userId)
-  //         .collection('liked_by')
-  //         .doc(currentUserId)
-  //         .get();
-  //
-  //     if (otherUserLike.exists) {
-  //       await _createMatch(userId);
-  //       _showMatchDialog(userId);
-  //     }
-  //
-  //     // Remove the liked user from the swipe items list
-  //     setState(() {
-  //       swipeItems.removeWhere((item) => (item.content as Map<String, dynamic>)['userId'] == userId);
-  //       matchEngine = MatchEngine(swipeItems: swipeItems);
-  //     });
-  //   } catch (e) {
-  //     print('Error handling match and remove: $e');
-  //     // Consider adding a snackbar or other error handling here
-  //   }
-  // }
-
-
-  //for the chat implimentation
 
   Future<void> _handleMatchAndRemove(String userId) async {
     try {
@@ -1151,74 +1088,10 @@ class _FeedPageState extends State<FeedPage> {
       },
     );
   }
-
-
-
-
   Future<void> _handleSuperLike(String userId) async {
     // Implement super like functionality if needed
     await _handleLike(userId);
   }
-
-  // Future<void> _createMatch(String otherUserId) async {
-  //   try {
-  //     final matchRef = _firestore.collection('matches').doc();
-  //     await matchRef.set({
-  //       'users': [currentUserId, otherUserId],
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //       'lastMessage': null,
-  //       'lastMessageTimestamp': null,
-  //     });
-  //
-  //     // Add match reference to both users
-  //     final batch = _firestore.batch();
-  //     batch.set(
-  //       _firestore
-  //           .collection('users')
-  //           .doc(currentUserId)
-  //           .collection('matches')
-  //           .doc(matchRef.id),
-  //       {'matchId': matchRef.id},
-  //     );
-  //     batch.set(
-  //       _firestore
-  //           .collection('users')
-  //           .doc(otherUserId)
-  //           .collection('matches')
-  //           .doc(matchRef.id),
-  //       {'matchId': matchRef.id},
-  //     );
-  //     await batch.commit();
-  //   } catch (e) {
-  //     print('Error creating match: $e');
-  //   }
-  // }
-  //
-  // void _showMatchDialog(String userId) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('It\'s a Match! 🎉'),
-  //         content: Text('You and this person like each other!'),
-  //         actions: [
-  //           TextButton(
-  //             child: Text('Keep Browsing'),
-  //             onPressed: () => Navigator.pop(context),
-  //           ),
-  //           TextButton(
-  //             child: Text('Send Message'),
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //               // Navigate to chat screen
-  //               // TODO: Implement navigation to chat
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1243,12 +1116,11 @@ class _FeedPageState extends State<FeedPage> {
             itemBuilder: (BuildContext context, int index) {
               final userFeed = swipeItems[index].content as Map<String, dynamic>;
               return UserCard(
+                userName : userFeed['userName'],
+                userId : userFeed['userId'],
                 posts: List<Map<String, dynamic>>.from(userFeed['posts'] as List),
-                userName: userFeed['name'] as String,
-                userAge: userFeed['age'] as String,
-                userLocation: userFeed['location'] as String,
-                details : allDocuments,
-                detailsforintrest: allDocsForIntrest,
+                passions: List<String>.from(userFeed['passions'] as List),
+                //aboutMe: List<String>.from(userFeed['aboutMe'] as List),
               );
             },
             onStackFinished: () {
@@ -1269,47 +1141,26 @@ class _FeedPageState extends State<FeedPage> {
 
 class UserCard extends StatelessWidget {
 
-
-  final List<Map<String, dynamic>> posts;
   final String userName;
-  final String userAge;
-  final String userLocation;
-  final List<dynamic> details; // Assuming details is a list of maps
-  final List<dynamic> detailsforintrest; // Assuming details is a list of maps
+  final List<Map<String, dynamic>> posts;
+  final String userId;
+  final List<String> passions;  // ✅ Added passions
+  //final List<String> aboutMe;  // ✅ Added aboutMe
+
+
   const UserCard({
     Key? key,
-    required this.posts,
     required this.userName,
-    required this.userAge,
-    required this.userLocation,
-    required this.details,
-    required this.detailsforintrest,
+    required this.userId,
+    required this.posts,
+    required this.passions,
+    //required this.aboutMe,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<String> aboutMeTags = [];
-    List<String> interestsTags = [];
-
-    for (var doc in details) {
-      if (doc.containsKey('individual')) {
-        aboutMeTags.add(doc['individual']);
-      }
-      if (doc.containsKey('niches')) {
-        aboutMeTags.addAll(doc['niches'].cast<String>());
-      }
-      if (doc.containsKey('collaborate with')) {
-        aboutMeTags.add(doc['collaborate with']);
-      }
-    }
-
-    for (var doc in detailsforintrest) {
-      if (doc.containsKey('passion')) {
-        interestsTags.addAll(doc['passion'].cast<String>());
-      }
-    }
-
     return Scaffold( // Use Scaffold for overall app structure
+      appBar: AppBar(title: Text("Swipe Feed of $userId")),
       body: SingleChildScrollView( // Enable scrolling for entire content
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1342,11 +1193,11 @@ class UserCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8.0, // Vertical spacing between rows of tags
-                    children: aboutMeTags.map((tag) => _buildTag(context, tag)).toList(),
-                  ),
+                  // Wrap(
+                  //   spacing: 8,
+                  //   runSpacing: 8.0, // Vertical spacing between rows of tags
+                  //   children: aboutMe.map((tag) => _buildTag(context, tag)).toList(),
+                  // ),
                   SizedBox(height: 16),
                   Text(
                     "My interests",
@@ -1359,7 +1210,7 @@ class UserCard extends StatelessWidget {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8.0, // Vertical spacing between rows of tags
-                    children: interestsTags.map((tag) => _buildTag(context, tag)).toList(),
+                    children: passions.map((tag) => _buildTag(context, tag)).toList(),
                   ),
                 ],
               ),
@@ -1422,3 +1273,5 @@ class UserCard extends StatelessWidget {
     );
   }
 }
+
+

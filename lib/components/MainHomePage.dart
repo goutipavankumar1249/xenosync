@@ -1,11 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_app/Chatfeature/ChatListPage.dart';
-import 'package:login_app/Chatfeature/ChatScreen.dart';
 import 'package:login_app/components/MatchesScreen.dart';
 import 'package:login_app/components/agreement/agreement_list_page.dart';
-import 'package:login_app/pages/feed_page.dart';
 import 'Profile_page.dart';
+import 'boost feature/feed_page.dart';
 
 class MainHomePage extends StatefulWidget {
   @override
@@ -35,7 +34,7 @@ class _MainHomePageState extends State<MainHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Xeno_Sync'),
-        //backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blueAccent,
         centerTitle: true,
       ),
       body: _pages[_currentIndex], // Display the selected page from the list
