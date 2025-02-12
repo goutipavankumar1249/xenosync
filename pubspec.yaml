@@ -60,7 +60,8 @@ dependencies:
   cached_network_image: ^3.2.0
   smooth_page_indicator: ^1.0.0
   flutter_email_sender: ^6.0.3
-
+  video_player: ^2.9.2
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

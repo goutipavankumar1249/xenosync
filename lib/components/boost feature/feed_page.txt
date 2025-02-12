@@ -528,11 +528,8 @@ import 'package:provider/provider.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../filters/FiltersPage.dart';
 import '../UserState.dart';
-import '../VideoWidget.dart';
 import '../interaction_service.dart';
-import 'package:video_player/video_player.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -587,11 +584,6 @@ class _FeedPageState extends State<FeedPage> {
       // ✅ Get boosted user IDs
       final boostedUserIds = boostedUsersQuery.docs.map((doc) => doc.id).toSet();
 
-      // 🔹 Remove current user if they are in boosted users
-      boostedUserIds.remove(currentUserId);
-
-      print('Boosted user IDs after removal of current user: $boostedUserIds');
-
       // 🔹 *Function to Check if a User Matches Filters (Only If Filters Are Applied)*
       bool matchesFilter(Map<String, dynamic> user) {
         if (filters.isEmpty) return true; // No filters selected → Show all users
@@ -609,8 +601,8 @@ class _FeedPageState extends State<FeedPage> {
         return ageMatch && genderMatch && heightMatch && bodyColorMatch;
       }
 
-      // ✅ First, Collect Boosted Users (Without Filtering Initially) and Remove Current User
-      final boostedUsers = boostedUsersQuery.docs.where((doc) => doc.id != currentUserId).toList();
+      // ✅ First, Collect Boosted Users (Without Filtering Initially)
+      final boostedUsers = boostedUsersQuery.docs.toList();
 
       // ✅ Collect Normal Users (Exclude Boosted Ones)
       final normalUsers = allUsersQuery.docs.where((doc) => !boostedUserIds.contains(doc.id)).toList();
@@ -647,10 +639,7 @@ class _FeedPageState extends State<FeedPage> {
           'imageUrl': doc.data()['imageUrl'] ?? '',
           'description': doc.data()['description'] ?? '',
           'uploadedAt': doc.data()['uploadedAt'],
-          'type': doc.data()['type'],
         }).toList();
-
-        print('The posts are $posts');
 
         return {
           'userName': userNameSnapshot.data()?['username'],
@@ -691,7 +680,6 @@ class _FeedPageState extends State<FeedPage> {
       }
     }
   }
-
 
   Future<void> _handleNope(String userId) async {
     try {
@@ -881,10 +869,13 @@ class _FeedPageState extends State<FeedPage> {
 
 
 class UserCard extends StatelessWidget {
+
   final String userName;
   final List<Map<String, dynamic>> posts;
   final String userId;
-  final List<String> passions;
+  final List<String> passions;  // ✅ Added passions
+  //final List<String> aboutMe;  // ✅ Added aboutMe
+
 
   const UserCard({
     Key? key,
@@ -892,107 +883,110 @@ class UserCard extends StatelessWidget {
     required this.userId,
     required this.posts,
     required this.passions,
+    //required this.aboutMe,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Swipe Feed of $userId"),
-      ),
-      body: SingleChildScrollView(
+    return Scaffold( // Use Scaffold for overall app structure
+      appBar: AppBar(title: Text("Swipe Feed of $userId")),
+      body: SingleChildScrollView( // Enable scrolling for entire content
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // **Check if posts list is not empty before accessing posts[0]**
-            if (posts.isNotEmpty)
-              posts[0]['type'] == 'video'
-                  ? VideoWidget(videoUrl: posts[0]['imageUrl'])
-                  : CachedNetworkImage(
-                imageUrl: posts[0]['imageUrl'],
+            // Image Section (First Image)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CachedNetworkImage(
+                imageUrl: posts.isNotEmpty ? posts[0]['imageUrl'] as String : 'https://asset.1cdn.vn/all/images/placeholder-image10.jpg',
                 fit: BoxFit.cover,
-                height: 700,
+                height: 700, // Adjust height as needed
                 width: double.infinity,
-                placeholder: (context, url) =>
-                    Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) =>
-                    Icon(Icons.error),
-              )
-            else
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "No posts available",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(),
                 ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-
-            // **User Details Section**
+            ),
+            // User Details Section
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
+                    "About me",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  // Wrap(
+                  //   spacing: 8,
+                  //   runSpacing: 8.0, // Vertical spacing between rows of tags
+                  //   children: aboutMe.map((tag) => _buildTag(context, tag)).toList(),
+                  // ),
+                  SizedBox(height: 16),
+                  Text(
                     "My interests",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
-                    runSpacing: 8.0,
-                    children:
-                    passions.map((tag) => _buildTag(context, tag)).toList(),
+                    runSpacing: 8.0, // Vertical spacing between rows of tags
+                    children: passions.map((tag) => _buildTag(context, tag)).toList(),
                   ),
                 ],
               ),
             ),
-
-            // **Remaining Posts Section**
-            if (posts.isNotEmpty)
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: posts.length-1,
-                itemBuilder: (context, index) {
-                  final post = posts[index+1];
-
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (post['type'] == 'video')
-                          VideoWidget(videoUrl: post['imageUrl'])
-                        else
-                          CachedNetworkImage(
-                            imageUrl: post['imageUrl'],
-                            fit: BoxFit.cover,
-                            height: 700,
-                            width: double.infinity,
-                            placeholder: (context, url) =>
-                                Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                          ),
-                        SizedBox(height: 8),
-                        Text(
-                          post['description'] as String? ?? '',
-                          style: TextStyle(fontSize: 14),
+            // Remaining Posts Section
+            ListView.builder(
+              shrinkWrap: true, // Prevent excessive scrolling
+              physics: NeverScrollableScrollPhysics(), // Disable scrolling within this section
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                final post = posts[index];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: post['imageUrl'] as String,
+                        fit: BoxFit.cover,
+                        height: 700, // Adjust height as needed
+                        width: double.infinity,
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(),
                         ),
-                        SizedBox(height: 16),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        post['description'] as String? ?? '',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                    ],
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
+
+
+
 
   Widget _buildTag(BuildContext context, String tag) {
     return Container(
@@ -1008,4 +1002,6 @@ class UserCard extends StatelessWidget {
     );
   }
 }
+
+
 

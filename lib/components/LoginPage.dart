@@ -1,18 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:login_app/components/Business/DetailsForBrand.dart';
 import 'package:login_app/components/mainHomePage.dart';
-import 'package:login_app/components/RoleSelectionPage.dart';
-import 'package:login_app/components/SplashScreen.dart';
-import 'package:login_app/components/individual/AudienceForInfluencer.dart';
-import 'package:login_app/components/individual/DetailsForInfluencer.dart';
-import 'package:login_app/components/Business/NicheForBrand.dart';
-import 'package:login_app/components/individual/NarrowInfluencer.dart';
-import 'package:login_app/components/individual/PassionPage.dart';
-import 'package:login_app/main.dart';
+import 'package:login_app/components/SignUpPage.dart';
 import 'package:provider/provider.dart';
-import 'SignUpPage.dart';
-import 'UploadImagesPage.dart';
 import 'UserState.dart';
 
 class LoginPage extends StatefulWidget {
@@ -89,11 +79,12 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             // App Title
             Text(
-              "Xeno Sync",
+              "Shot OK", // Updated to "Shot OK"
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
+                fontFamily: 'Montserrat', // Added Montserrat font
               ),
             ),
             Text(
@@ -102,13 +93,18 @@ class _LoginPageState extends State<LoginPage> {
                 fontSize: 28,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
+                fontFamily: 'Montserrat', // Added Montserrat font
               ),
             ),
             SizedBox(height: 40),
             // Email Field
             Text(
               "Email Id",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Montserrat', // Added Montserrat font
+              ),
             ),
             SizedBox(height: 8),
             TextField(
@@ -118,7 +114,24 @@ class _LoginPageState extends State<LoginPage> {
                 contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFF425164), // Border color #425164
+                    width: 1.5, // Border width
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFF425164), // Border color #425164
+                    width: 1.5, // Border width
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFF425164), // Border color #425164
+                    width: 1.5, // Border width
+                  ),
                 ),
               ),
             ),
@@ -126,7 +139,11 @@ class _LoginPageState extends State<LoginPage> {
             // Password Field
             Text(
               "Password",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Montserrat', // Added Montserrat font
+              ),
             ),
             SizedBox(height: 8),
             TextField(
@@ -137,30 +154,71 @@ class _LoginPageState extends State<LoginPage> {
                 contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFF425164), // Border color #425164
+                    width: 1.5, // Border width
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFF425164), // Border color #425164
+                    width: 1.5, // Border width
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFF425164), // Border color #425164
+                    width: 1.5, // Border width
+                  ),
                 ),
               ),
             ),
             SizedBox(height: 30),
             // Next Button
             Center(
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _loginUser,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+              child: Container(
+                width: double.infinity, // Full width
+                margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+                height: 50, // Fixed height
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF004DAB), Color(0xFF09163D)], // Gradient colors
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
+                  borderRadius: BorderRadius.circular(25), // Rounded corners
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x40F4FAFF), // Shadow color with opacity
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                      offset: Offset(0, 0),
+                    ),
+                  ],
                 ),
-                child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
-                  "Next",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _loginUser,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent, // Transparent background
+                    shadowColor: Colors.transparent, // Remove default shadow
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25), // Rounded corners
+                    ),
+                    padding: EdgeInsets.zero, // Remove default padding
+                  ),
+                  child: _isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                    "Next",
+                    style: TextStyle(
+                      color: Colors.white, // White text color
+                      fontFamily: 'Montserrat', // Montserrat font
+                      fontWeight: FontWeight.w700, // Font weight 700
+                      fontSize: 19, // Font size 19px
+                      height: 26 / 19, // Line height 26px
+                    ),
                   ),
                 ),
               ),
@@ -172,7 +230,11 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Text(
                   "Don’t have an account?",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Montserrat', // Added Montserrat font
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
@@ -180,7 +242,12 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text(
                     "Sign up",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.blue),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF062C68), // Updated to #062C68
+                      fontFamily: 'Montserrat', // Added Montserrat font
+                    ),
                   ),
                 ),
               ],
@@ -192,7 +259,12 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 child: Text(
                   "Forget password?",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.blue),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF062C68), // Updated to #062C68
+                    fontFamily: 'Montserrat', // Added Montserrat font
+                  ),
                 ),
               ),
             ),
@@ -202,5 +274,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-

@@ -98,6 +98,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set the background color to white
       body: SafeArea(
         child: Column(
           children: [
@@ -105,7 +106,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
             _buildTabBar(context),
             const SizedBox(height: 10),
             Expanded(
-              child: _tabs[_selectedPageIndex].screen,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add padding to the content
+                child: _tabs[_selectedPageIndex].screen,
+              ),
             ),
           ],
         ),

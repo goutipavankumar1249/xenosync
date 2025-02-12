@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:login_app/components/individual/DetailsForInfluencer.dart';
 import 'package:login_app/components/individual/Model2.dart';
 import 'package:provider/provider.dart';
 import '../UserState.dart';
@@ -27,7 +26,6 @@ class _ModelNicheState extends State<ModelNiche> {
     "Photographic Model"
   ];
 
-
   // Selected options
   final Set<String> selectedNiche = {};
 
@@ -44,7 +42,7 @@ class _ModelNicheState extends State<ModelNiche> {
   Future<void> _saveData(String userId) async {
     if (selectedNiche.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select at least one option.")),
+        SnackBar(content: Text("Please select at least one niche.")),
       );
       return;
     }
@@ -54,10 +52,10 @@ class _ModelNicheState extends State<ModelNiche> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Model Niche details saved successfully!")),
+      SnackBar(content: Text("Details saved successfully!")),
     );
 
-    // Navigate to the next page (if applicable)
+    // Navigate to the next page
     Navigator.push(context, MaterialPageRoute(builder: (context) => Model2()));
   }
 
@@ -71,43 +69,102 @@ class _ModelNicheState extends State<ModelNiche> {
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
+        title: Center(
+          child: Text(
+            "Shot OK", // Brand name
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontFamily: 'Montserrat', // Montserrat font
+            ),
+          ),
+        ),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Model Niche",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Heading
+                  Text(
+                    "Tell us more about your role",
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat', // Montserrat font
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  // Subtitle
+                  Text(
+                    "Choose the categories that fit you best.",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF6b6b6b), // Color #6b6b6b
+                      fontFamily: 'Source Sans Pro', // Source Sans Pro font
+                      fontWeight: FontWeight.w400, // Font weight 400
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // Model Niche Section
+                  Text(
+                    "Model Niche",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat', // Montserrat font
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  _buildChipGroup(nicheOptions, selectedNiche),
+                  SizedBox(height: 30),
+                ],
+              ),
             ),
-            SizedBox(height: 10),
-            Text(
-              "choose one or more model Niche",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+
+          // Fixed Next Button at the Bottom
+          Container(
+            width: double.infinity, // Full width
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white, // Background color
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: Offset(0, -5),
+                ),
+              ],
             ),
-            SizedBox(height: 20),
-            _buildChipGroup(nicheOptions, selectedNiche),
-            SizedBox(height: 410),
-            ElevatedButton(
-              onPressed: () => _saveData(userId), // Save role on click
+            child: ElevatedButton(
+              onPressed: () => _saveData(userId),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15), backgroundColor: Colors.blue,
+                padding: EdgeInsets.symmetric(vertical: 15),
+                backgroundColor: Color(0xFF004DAB), // Button color
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: Center(
-                child: Text(
-                  "Next",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+              child: Text(
+                "Next",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontFamily: 'Montserrat', // Montserrat font
+                  fontWeight: FontWeight.w700, // Font weight 700
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

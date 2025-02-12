@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:login_app/components/Business/Nextpage2.dart';
-import 'package:login_app/components/SplashScreen.dart';
 import 'package:login_app/components/individual/NextPage.dart';
 import 'package:provider/provider.dart';
 import 'UserState.dart';
@@ -18,7 +17,6 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
 
   void saveRoleToFirebase() async {
     final User? currentUser = FirebaseAuth.instance.currentUser;
-    print('$currentUser');
     if (currentUser != null && selectedRole != null) {
       final String userId = currentUser.uid; // Get the current user's ID
 
@@ -32,7 +30,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
         SnackBar(content: Text("Role saved successfully!")),
       );
 
-      //storing the userid
+      // Storing the user ID
       Provider.of<UserState>(context, listen: false).setUserId(userId);
       print('$userId');
 
@@ -56,33 +54,52 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.black), // Back arrow
           onPressed: () => Navigator.pop(context),
         ),
-        elevation: 0,
+        title: Center(
+          child: Text(
+            "Shot OK", // Brand name
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontFamily: 'Montserrat', // Montserrat font
+            ),
+          ),
+        ),
+        elevation: 0, // Remove shadow
+        backgroundColor: Colors.transparent, // Transparent background
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Welcome text
             Text(
               "Welcome! Let’s get to know you better",
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'Montserrat', // Montserrat font
               ),
             ),
             SizedBox(height: 10),
+            // Subtitle text
             Text(
-              "Choose your role to customize your experience.",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              "Choose the categories that fit you best.",
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xFF6b6b6b), // Color #6b6b6b
+                fontFamily: 'Source Sans Pro', // Source Sans Pro font
+                fontWeight: FontWeight.w400, // Font weight 400
+              ),
             ),
             SizedBox(height: 30),
             // Role buttons
@@ -94,15 +111,23 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: selectedRole == "Individual"
-                        ? Colors.blue
-                        : Colors.black,
+                        ? Color(0xFF004DAB) // Highlight border color #004DAB
+                        : Color(0xFF425164), // Default border color #425164
+                    width: selectedRole == "Individual" ? 2.5 : 1.5, // Thicker border for selected
                   ),
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(30), // Rounded corners
                 ),
                 child: Center(
                   child: Text(
                     "Individual",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Montserrat', // Montserrat font
+                      fontWeight: FontWeight.w500, // Font weight 500
+                      color: selectedRole == "Individual"
+                          ? Color(0xFF004DAB) // Highlight text color #004DAB
+                          : Colors.black, // Default text color
+                    ),
                   ),
                 ),
               ),
@@ -114,33 +139,69 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                 margin: EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color:
-                    selectedRole == "Business" ? Colors.blue : Colors.black,
+                    color: selectedRole == "Business"
+                        ? Color(0xFF004DAB) // Highlight border color #004DAB
+                        : Color(0xFF425164), // Default border color #425164
+                    width: selectedRole == "Business" ? 2.5 : 1.5, // Thicker border for selected
                   ),
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(30), // Rounded corners
                 ),
                 child: Center(
                   child: Text(
                     "Business",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Montserrat', // Montserrat font
+                      fontWeight: FontWeight.w500, // Font weight 500
+                      color: selectedRole == "Business"
+                          ? Color(0xFF004DAB) // Highlight text color #004DAB
+                          : Colors.black, // Default text color
+                    ),
                   ),
                 ),
               ),
             ),
             Spacer(),
             // Next button
-            ElevatedButton(
-              onPressed: saveRoleToFirebase,
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15), backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            Container(
+              width: double.infinity, // Full width
+              margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+              height: 50, // Fixed height
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF004DAB), Color(0xFF09163D)], // Gradient colors
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
+                borderRadius: BorderRadius.circular(25), // Rounded corners
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x40F4FAFF), // Shadow color with opacity
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: Offset(0, 0),
+                  ),
+                ],
               ),
-              child: Center(
+              child: ElevatedButton(
+                onPressed: saveRoleToFirebase,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent, // Transparent background
+                  shadowColor: Colors.transparent, // Remove default shadow
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25), // Rounded corners
+                  ),
+                  padding: EdgeInsets.zero, // Remove default padding
+                ),
                 child: Text(
                   "Next",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.white, // White text color
+                    fontFamily: 'Montserrat', // Montserrat font
+                    fontWeight: FontWeight.w700, // Font weight 700
+                    fontSize: 19, // Font size 19px
+                    height: 26 / 19, // Line height 26px
+                  ),
                 ),
               ),
             ),

@@ -59,6 +59,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'interaction.dart';
 import 'interaction_service.dart';
 
@@ -75,14 +76,18 @@ class LikedScreen extends StatelessWidget {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return ListView.builder(
+            itemCount: 5,
+            itemBuilder: (context, index) => _buildShimmerEffect(),
+          );
         }
 
         final interactions = snapshot.data ?? [];
+        if (interactions.isEmpty) {
+          return Center(child: Text('No likes yet'));
+        }
 
-        return interactions.isEmpty
-            ? Center(child: Text('No likes yet'))
-            : ListView.builder(
+        return ListView.builder(
           itemCount: interactions.length,
           itemBuilder: (context, index) {
             final interaction = interactions[index];
@@ -129,18 +134,71 @@ class LikedScreen extends StatelessWidget {
           ),
           SizedBox(width: 10),
           Expanded(
-            child: Text(
-              message,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: userName,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  TextSpan(
+                    text: " liked your profile",
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
               ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerEffect() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          padding: EdgeInsets.all(10),
+          width: double.infinity,
+          height: 55,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 45,
+                height: 45,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  height: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

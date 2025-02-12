@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:login_app/components/individual/DetailsForInfluencer.dart';
 import 'package:login_app/components/individual/SocialMedia.dart';
 import 'package:provider/provider.dart';
 import '../UserState.dart';
@@ -19,7 +18,7 @@ class _InfluencerNicheState extends State<InfluencerNiche> {
     "Beauty & Makeup",
     "Fitness & Health",
     "Tech & Gadgets",
-    "FLifestyle",
+    "Lifestyle",
     "Food & Beverage",
     "Automobile",
     "Travel",
@@ -33,12 +32,12 @@ class _InfluencerNicheState extends State<InfluencerNiche> {
   // Selected options
   final Set<String> selectedNiche = {};
 
-  void toggleSelection(String option, Set<String> selectedSet) {
+  void toggleSelection(String option) {
     setState(() {
-      if (selectedSet.contains(option)) {
-        selectedSet.remove(option);
+      if (selectedNiche.contains(option)) {
+        selectedNiche.remove(option);
       } else {
-        selectedSet.add(option);
+        selectedNiche.add(option);
       }
     });
   }
@@ -51,7 +50,12 @@ class _InfluencerNicheState extends State<InfluencerNiche> {
       return;
     }
 
-    await _firestore.collection('users').doc('$userId').collection('details').doc('Influencer Niche').set({
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('details')
+        .doc('Influencer Niche')
+        .set({
       "niches": selectedNiche.toList(),
     });
 
@@ -59,8 +63,9 @@ class _InfluencerNicheState extends State<InfluencerNiche> {
       SnackBar(content: Text("Influencer Niche details saved successfully!")),
     );
 
-    // Navigate to the next page (if applicable)
-    Navigator.push(context, MaterialPageRoute(builder: (context) => SocialMedia()));
+    // Navigate to the next page
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SocialMedia()));
   }
 
   @override
@@ -69,47 +74,53 @@ class _InfluencerNicheState extends State<InfluencerNiche> {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          "Shot OK",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Page Title
             Text(
               "Influencer Niche",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Montserrat',
+              ),
             ),
             SizedBox(height: 10),
+
+            // Subtitle
             Text(
-              "choose one or more Influencer Niche",
+              "Choose one or more Influencer Niche",
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 20),
+
+            // Niche Section
             _buildSectionTitle("Niche"),
-            _buildChipGroup(nicheOptions, selectedNiche),
-            SizedBox(height: 300),
-            ElevatedButton(
-              onPressed: () => _saveData(userId),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Color(0xFF081B48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  "Next",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ),
+            Expanded(child: _buildChipGroup()),
+
+            // "Next" Button fixed at bottom
+            _buildGradientButton(userId),
+            SizedBox(height: 20),
           ],
         ),
       ),
@@ -119,41 +130,85 @@ class _InfluencerNicheState extends State<InfluencerNiche> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Montserrat',
+      ),
     );
   }
 
-  Widget _buildChipGroup(List<String> options, Set<String> selectedSet) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: options.map((option) {
-        bool isSelected = selectedSet.contains(option);
-        return GestureDetector(
-          onTap: () => toggleSelection(option, selectedSet),
-          child: Chip(
-            label: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(option),
-                if (isSelected) ...[
-                  SizedBox(width: 5),
-                  Icon(Icons.close, size: 16, color: Colors.white),
+  Widget _buildChipGroup() {
+    return SingleChildScrollView(
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        children: nicheOptions.map((option) {
+          bool isSelected = selectedNiche.contains(option);
+          return GestureDetector(
+            onTap: () => toggleSelection(option),
+            child: Chip(
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(option),
+                  if (isSelected) ...[
+                    SizedBox(width: 5),
+                    Icon(Icons.close, size: 16, color: Colors.white),
+                  ],
                 ],
-              ],
+              ),
+              labelStyle: TextStyle(
+                color: isSelected ? Colors.white : Color(0xFF081B48),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontFamily: 'Montserrat',
+              ),
+              backgroundColor: isSelected ? Color(0xFF081B48) : Colors.transparent,
+              side: BorderSide(color: Color(0xFF081B48)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
-            labelStyle: TextStyle(
-              color: isSelected ? Colors.white : Color(0xFF081B48),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildGradientButton(String userId) {
+    return GestureDetector(
+      onTap: () => _saveData(userId),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.85, // Adjusted width
+        height: 50, // Consistent button height
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25), // Rounded corners
+          gradient: LinearGradient(
+            colors: [Color(0xFF004DAB), Color(0xFF09163D)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x66F4FAFF), // Shadow effect
+              blurRadius: 10,
+              spreadRadius: 2,
             ),
-            backgroundColor: isSelected ? Color(0xFF081B48) : Colors.transparent,
-            side: BorderSide(color: Color(0xFF081B48)),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            "Next",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w700,
+              fontSize: 19,
+              height: 26 / 19, // Line height adjustment
             ),
           ),
-        );
-      }).toList(),
+        ),
+      ),
     );
   }
 }

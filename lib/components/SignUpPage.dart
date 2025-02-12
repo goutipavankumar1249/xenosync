@@ -125,133 +125,324 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Xeno Sync",
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            // Page Title
-            Text(
-              "Sign Up",
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 20),
-            // Username Field
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: "Username",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+      body: SingleChildScrollView(
+        // Wrap the Column in SingleChildScrollView
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // App Title
+              Text(
+                "Shot OK", // Updated to "Shot OK"
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'Montserrat', // Added Montserrat font
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            // Email Field
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+              // Page Title
+              Text(
+                "Sign Up",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                  fontFamily: 'Montserrat', // Added Montserrat font
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            // Password Field
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: "Password",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+              SizedBox(height: 20),
+              // Username Field
+              Text(
+                "Username",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Montserrat', // Added Montserrat font
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            // Confirm Password Field
-            TextField(
-              controller: _confirmPasswordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: "Confirm Password",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-              ),
-            ),
-            SizedBox(height: 30),
-            // Next Button
-            Center(
-              child: ElevatedButton(
-                onPressed: _signUpWithEmailAndPassword,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+              SizedBox(height: 8),
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  hintText: "Enter your username...",
+                  contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
                   ),
                 ),
-                child: Text(
-                  "Next",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 16),
+              // Email Field
+              Text(
+                "Email",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Montserrat', // Added Montserrat font
                 ),
               ),
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  signInWithGoogle();
-                },
-                child: Text(
-                  "continue with google",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.blue),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Already have an account?",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Add navigation to sign-up page
-                    Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) =>
-                          LoginPage()), // Replace with your next screen
-                    );
-                  },
-                  child: Text(
-                    "Login",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.blue),
+              SizedBox(height: 8),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  hintText: "Enter your email...",
+                  contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
                   ),
                 ),
-              ],
-            ),
-          ],
+              ),
+              SizedBox(height: 16),
+              // Password Field
+              Text(
+                "Password",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Montserrat', // Added Montserrat font
+                ),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: "Enter your password...",
+                  contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              // Confirm Password Field
+              Text(
+                "Confirm Password",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Montserrat', // Added Montserrat font
+                ),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                controller: _confirmPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: "Confirm your password...",
+                  contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 30),
+              // Next Button
+              Center(
+                child: Container(
+                  width: double.infinity, // Full width
+                  margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+                  height: 50, // Fixed height
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF004DAB), Color(0xFF09163D)], // Gradient colors
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.circular(25), // Rounded corners
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0x40F4FAFF), // Shadow color with opacity
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _signUpWithEmailAndPassword,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent, // Transparent background
+                      shadowColor: Colors.transparent, // Remove default shadow
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25), // Rounded corners
+                      ),
+                      padding: EdgeInsets.zero, // Remove default padding
+                    ),
+                    child: Text(
+                      "Next",
+                      style: TextStyle(
+                        color: Colors.white, // White text color
+                        fontFamily: 'Montserrat', // Montserrat font
+                        fontWeight: FontWeight.w700, // Font weight 700
+                        fontSize: 19, // Font size 19px
+                        height: 26 / 19, // Line height 26px
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Continue with Google Button
+              Center(
+                child: Container(
+                  width: double.infinity, // Full width
+                  margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+                  height: 50, // Fixed height
+                  decoration: BoxDecoration(
+                    color: Colors.white, // White background
+                    borderRadius: BorderRadius.circular(25), // Rounded corners
+                    border: Border.all(
+                      color: Color(0xFF425164), // Border color #425164
+                      width: 1.5, // Border width
+                    ),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: signInWithGoogle,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent, // Transparent background
+                      shadowColor: Colors.transparent, // Remove default shadow
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25), // Rounded corners
+                      ),
+                      padding: EdgeInsets.zero, // Remove default padding
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/google_icon.png', // Add Google icon asset
+                          height: 24,
+                          width: 24,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          "Continue with Google",
+                          style: TextStyle(
+                            color: Colors.black, // Black text color
+                            fontFamily: 'Montserrat', // Montserrat font
+                            fontWeight: FontWeight.w700, // Font weight 700
+                            fontSize: 16, // Font size 16px
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Already have an account? Login
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have an account?",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Montserrat', // Added Montserrat font
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
+                    child: Text(
+                      "Login",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF062C68), // Updated to #062C68
+                        fontFamily: 'Montserrat', // Added Montserrat font
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20), // Extra padding at the bottom
+            ],
+          ),
         ),
       ),
     );
