@@ -37,6 +37,7 @@ class _MainHomePageState extends State<MainHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
@@ -54,8 +55,9 @@ class _MainHomePageState extends State<MainHomePage> {
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FiltersPage())
-              ); // Navigate to FiltersPage
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          FiltersPage())); // Navigate to FiltersPage
             },
           ),
         ],

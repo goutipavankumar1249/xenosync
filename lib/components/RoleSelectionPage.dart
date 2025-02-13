@@ -38,12 +38,14 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
       if (selectedRole == "Individual") {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => NextPage()), // Navigate to IndividualPage
+          MaterialPageRoute(
+              builder: (context) => NextPage()), // Navigate to IndividualPage
         );
       } else if (selectedRole == "Business") {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => NextPage2()), // Navigate to BusinessPage
+          MaterialPageRoute(
+              builder: (context) => NextPage2()), // Navigate to BusinessPage
         );
       }
     } else {
@@ -57,24 +59,24 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set white background
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black), // Back arrow
           onPressed: () => Navigator.pop(context),
         ),
-        title: Center(
-          child: Text(
-            "Shot OK", // Brand name
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontFamily: 'Montserrat', // Montserrat font
-            ),
+        title: Text(
+          "Shot OK", // Brand name
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontFamily: 'Montserrat', // Montserrat font
           ),
         ),
+        centerTitle: true,
         elevation: 0, // Remove shadow
-        backgroundColor: Colors.transparent, // Transparent background
+        backgroundColor: Colors.white, // Set white background for AppBar
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -83,7 +85,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
           children: [
             // Welcome text
             Text(
-              "Welcome! Let’s get to know you better",
+              "Welcome! Let's get to know you better",
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -113,7 +115,9 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                     color: selectedRole == "Individual"
                         ? Color(0xFF004DAB) // Highlight border color #004DAB
                         : Color(0xFF425164), // Default border color #425164
-                    width: selectedRole == "Individual" ? 2.5 : 1.5, // Thicker border for selected
+                    width: selectedRole == "Individual"
+                        ? 2.5
+                        : 1.5, // Thicker border for selected
                   ),
                   borderRadius: BorderRadius.circular(30), // Rounded corners
                 ),
@@ -142,7 +146,9 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                     color: selectedRole == "Business"
                         ? Color(0xFF004DAB) // Highlight border color #004DAB
                         : Color(0xFF425164), // Default border color #425164
-                    width: selectedRole == "Business" ? 2.5 : 1.5, // Thicker border for selected
+                    width: selectedRole == "Business"
+                        ? 2.5
+                        : 1.5, // Thicker border for selected
                   ),
                   borderRadius: BorderRadius.circular(30), // Rounded corners
                 ),
@@ -165,11 +171,15 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
             // Next button
             Container(
               width: double.infinity, // Full width
-              margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+              margin:
+                  EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
               height: 50, // Fixed height
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF004DAB), Color(0xFF09163D)], // Gradient colors
+                  colors: [
+                    Color(0xFF004DAB),
+                    Color(0xFF09163D)
+                  ], // Gradient colors
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

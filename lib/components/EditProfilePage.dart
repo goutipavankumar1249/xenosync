@@ -23,6 +23,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String? _dateOfBirth;
   String? _location;
   String? _instagramHandle;
+  String? _youtubeHandle;
+  String? _mojHandle;
+  String? _shareChatHandle;
+  String? _facebookHandle;
+  String? _linkedInHandle;
   String? _phoneNumber;
 
   bool _isSaving = false; // To show a loading indicator
@@ -65,6 +70,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       'date_of_birth': _dateOfBirth,
       'location': _location,
       'instagram_handle': _instagramHandle,
+      'youtube_handle': _youtubeHandle,
+      'moj_handle': _mojHandle,
+      'sharechat_handle': _shareChatHandle,
+      'facebook_handle': _facebookHandle,
+      'linkedin_handle': _linkedInHandle,
       'phone_number': _phoneNumber,
       'image_url': imageUrl,
     });
@@ -82,9 +92,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set white background
       appBar: AppBar(
+        backgroundColor: Colors.white, // White background for AppBar
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color(0xFF081B48), // Changed to #081B48
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         elevation: 0,
@@ -105,17 +120,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 60,
-                        backgroundColor: Colors.blue.shade100,
+                        backgroundColor: const Color(0xFF081B48)
+                            .withOpacity(0.1), // Light #081B48
                         backgroundImage:
-                        _imageFile != null ? FileImage(_imageFile!) : null,
+                            _imageFile != null ? FileImage(_imageFile!) : null,
                         child: _imageFile == null
-                            ? const Icon(Icons.person, size: 60, color: Colors.blue)
+                            ? Icon(Icons.person,
+                                size: 60,
+                                color: const Color(0xFF081B48)
+                                    .withOpacity(0.5)) // #081B48 with opacity
                             : null,
                       ),
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.blue,
+                          color: const Color(0xFF081B48), // Changed to #081B48
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 2),
                         ),
@@ -134,17 +153,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
               // Full Name Field
               _buildInputField(
                 label: "Full Name",
-                icon: Icons.person,
                 onSaved: (value) => _fullName = value,
                 validator: (value) =>
-                value!.isEmpty ? "Full Name is required" : null,
+                    value!.isEmpty ? "Full Name is required" : null,
               ),
               const SizedBox(height: 20),
 
               // Bio Field
               _buildInputField(
                 label: "Bio",
-                icon: Icons.info,
                 onSaved: (value) => _bio = value,
               ),
               const SizedBox(height: 20),
@@ -152,7 +169,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               // Date of Birth Field
               _buildInputField(
                 label: "Date of Birth",
-                icon: Icons.calendar_today,
                 onSaved: (value) => _dateOfBirth = value,
               ),
               const SizedBox(height: 20),
@@ -160,7 +176,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               // Location Field
               _buildInputField(
                 label: "Location",
-                icon: Icons.location_on,
                 onSaved: (value) => _location = value,
               ),
               const SizedBox(height: 20),
@@ -168,36 +183,99 @@ class _EditProfilePageState extends State<EditProfilePage> {
               // Instagram Handle Field
               _buildInputField(
                 label: "Instagram Handle",
-                icon: Icons.link,
                 onSaved: (value) => _instagramHandle = value,
+              ),
+              const SizedBox(height: 20),
+
+              // YouTube Handle Field
+              _buildInputField(
+                label: "YouTube Handle",
+                onSaved: (value) => _youtubeHandle = value,
+              ),
+              const SizedBox(height: 20),
+
+              // Moj Handle Field
+              _buildInputField(
+                label: "Moj Handle",
+                onSaved: (value) => _mojHandle = value,
+              ),
+              const SizedBox(height: 20),
+
+              // ShareChat Handle Field
+              _buildInputField(
+                label: "ShareChat Handle",
+                onSaved: (value) => _shareChatHandle = value,
+              ),
+              const SizedBox(height: 20),
+
+              // Facebook Handle Field
+              _buildInputField(
+                label: "Facebook Handle",
+                onSaved: (value) => _facebookHandle = value,
+              ),
+              const SizedBox(height: 20),
+
+              // LinkedIn Handle Field
+              _buildInputField(
+                label: "LinkedIn Handle",
+                onSaved: (value) => _linkedInHandle = value,
               ),
               const SizedBox(height: 20),
 
               // Phone Number Field
               _buildInputField(
                 label: "Phone Number",
-                icon: Icons.phone,
                 onSaved: (value) => _phoneNumber = value,
               ),
               const SizedBox(height: 30),
 
               // Save Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isSaving ? null : _saveProfileData,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+              Center(
+                child: Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF004DAB),
+                        Color(0xFF081B48), // Changed end color to #081B48
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF081B48)
+                            .withOpacity(0.25), // Changed shadow color
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 0),
+                      ),
+                    ],
                   ),
-                  child: _isSaving
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                    "Save",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  child: ElevatedButton(
+                    onPressed: _isSaving ? null : _saveProfileData,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: _isSaving
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Save",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 19,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -211,29 +289,56 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // Helper method to build consistent input fields
   Widget _buildInputField({
     required String label,
-    required IconData icon,
     required FormFieldSetter<String> onSaved,
     FormFieldValidator<String>? validator,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: TextFormField(
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon),
-          border: InputBorder.none, // Remove default underline
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            fontFamily: 'Montserrat',
+            color: Color(0xFF081B48), // Changed to #081B48
+          ),
         ),
-        onSaved: onSaved,
-        validator: validator,
-      ),
+        const SizedBox(height: 8),
+        TextFormField(
+          decoration: InputDecoration(
+            hintText: "Enter your $label...",
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.0),
+              borderSide: const BorderSide(
+                color: Color(0xFF081B48), // Changed to #081B48
+                width: 1.5,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.0),
+              borderSide: const BorderSide(
+                color: Color(0xFF081B48), // Changed to #081B48
+                width: 1.5,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.0),
+              borderSide: const BorderSide(
+                color: Color(0xFF081B48), // Changed to #081B48
+                width: 1.5,
+              ),
+            ),
+          ),
+          onSaved: onSaved,
+          validator: validator,
+        ),
+      ],
     );
   }
 }
-
 // import 'package:flutter/material.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';

@@ -22,7 +22,8 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   // Function to handle sign-up with email and password
   Future<void> _signUpWithEmailAndPassword() async {
@@ -31,7 +32,10 @@ class _SignUpPageState extends State<SignUpPage> {
     String password = _passwordController.text.trim();
     String confirmPassword = _confirmPasswordController.text.trim();
 
-    if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (username.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("All fields are required")),
       );
@@ -47,7 +51,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
     try {
       // Create a new user in Firebase Authentication
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -68,7 +73,9 @@ class _SignUpPageState extends State<SignUpPage> {
         Fluttertoast.showToast(msg: "Signup Successfully");
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => RoleSelectionPage()), // Replace with your next screen
+          MaterialPageRoute(
+              builder: (context) =>
+                  RoleSelectionPage()), // Replace with your next screen
         );
       }
     } catch (e) {
@@ -83,14 +90,16 @@ class _SignUpPageState extends State<SignUpPage> {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
 
-        final UserCredential userCredential = await _auth.signInWithCredential(credential);
+        final UserCredential userCredential =
+            await _auth.signInWithCredential(credential);
         String userId = userCredential.user!.uid;
 
         // Update userId using UserState
@@ -99,11 +108,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
         if (user != null) {
           // Check if user data already exists in Firestore
-          DocumentSnapshot userSnapshot = await _firestore.collection('users').doc(userId).get();
+          DocumentSnapshot userSnapshot =
+              await _firestore.collection('users').doc(userId).get();
 
           if (userSnapshot.exists) {
             Fluttertoast.showToast(msg: "Login Successfully");
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RoleSelectionPage()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => RoleSelectionPage()));
           } else {
             // Store new user data in Firestore
             await _firestore.collection('users').doc(userId).set({
@@ -112,7 +123,8 @@ class _SignUpPageState extends State<SignUpPage> {
             });
 
             Fluttertoast.showToast(msg: "Signup Successfully");
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RoleSelectionPage()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => RoleSelectionPage()));
           }
         } else {
           Fluttertoast.showToast(msg: "Google Sign-in failed");
@@ -128,6 +140,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         // Wrap the Column in SingleChildScrollView
         child: Padding(
@@ -171,7 +184,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 controller: _usernameController,
                 decoration: InputDecoration(
                   hintText: "Enter your username...",
-                  contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(
@@ -210,7 +224,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   hintText: "Enter your email...",
-                  contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(
@@ -250,7 +265,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Enter your password...",
-                  contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(
@@ -290,7 +306,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Confirm your password...",
-                  contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(
@@ -319,11 +336,15 @@ class _SignUpPageState extends State<SignUpPage> {
               Center(
                 child: Container(
                   width: double.infinity, // Full width
-                  margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+                  margin: EdgeInsets.symmetric(
+                      horizontal: 20), // Padding on both sides
                   height: 50, // Fixed height
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF004DAB), Color(0xFF09163D)], // Gradient colors
+                      colors: [
+                        Color(0xFF004DAB),
+                        Color(0xFF09163D)
+                      ], // Gradient colors
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -340,10 +361,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: ElevatedButton(
                     onPressed: _signUpWithEmailAndPassword,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent, // Transparent background
+                      backgroundColor:
+                          Colors.transparent, // Transparent background
                       shadowColor: Colors.transparent, // Remove default shadow
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25), // Rounded corners
+                        borderRadius:
+                            BorderRadius.circular(25), // Rounded corners
                       ),
                       padding: EdgeInsets.zero, // Remove default padding
                     ),
@@ -365,7 +388,8 @@ class _SignUpPageState extends State<SignUpPage> {
               Center(
                 child: Container(
                   width: double.infinity, // Full width
-                  margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+                  margin: EdgeInsets.symmetric(
+                      horizontal: 20), // Padding on both sides
                   height: 50, // Fixed height
                   decoration: BoxDecoration(
                     color: Colors.white, // White background
@@ -378,10 +402,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: ElevatedButton(
                     onPressed: signInWithGoogle,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent, // Transparent background
+                      backgroundColor:
+                          Colors.transparent, // Transparent background
                       shadowColor: Colors.transparent, // Remove default shadow
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25), // Rounded corners
+                        borderRadius:
+                            BorderRadius.circular(25), // Rounded corners
                       ),
                       padding: EdgeInsets.zero, // Remove default padding
                     ),

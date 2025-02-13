@@ -30,25 +30,26 @@ class _SendAgreementPageState extends State<SendAgreementPage> {
       SnackBar(content: Text('Agreement request sent!')),
     );
 
-    Navigator.pop(context); // Go back after sending
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Set background to white
       appBar: AppBar(
         title: Text(
           'Send Agreement',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black, // Changed title text color to black
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -61,53 +62,65 @@ class _SendAgreementPageState extends State<SendAgreementPage> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade700,
+                  color: Color(0xFF081B48), // Changed text color
                 ),
               ),
               SizedBox(height: 10),
-              Text(
-                '''E-AGREEMENT
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Color(0xFF081B48), width: 1.5),
+                ),
+                child: Text(
+                  '''E-AGREEMENT
 
-                    This Agreement, made on [Date], is between [Client Name] (“Client”) and [Service Provider Name] (“Service Provider”).
-          
-                      The Service Provider will deliver:
-                    •	[e.g., 5 high-quality photos for a fashion shoot]
-                    •	[e.g., 1 promotional video]
-                    by [Completion Date].
-          
-                    Payment Terms:
-                    Total: [Amount]
-                    •	[X%] upon signing
-                    •	[X%] upon completion
-          
-                      Dispute Resolution:
-                      Any disputes will be resolved via [mediation/arbitration] in [jurisdiction].
-          
-                    By signing, both parties agree to the terms and confirm this Agreement is legally binding..''',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
+This Agreement, made on [Date], is between [Client Name] (“Client”) and [Service Provider Name] (“Service Provider”).
+
+The Service Provider will deliver:
+•  [e.g., 5 high-quality photos for a fashion shoot]
+•  [e.g., 1 promotional video]
+by [Completion Date].
+
+Payment Terms:
+Total: [Amount]
+•  [X%] upon signing
+•  [X%] upon completion
+
+Dispute Resolution:
+Any disputes will be resolved via [mediation/arbitration] in [jurisdiction].
+
+By signing, both parties agree to the terms and confirm this Agreement is legally binding.''',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade800,
+                    fontWeight: FontWeight.w500,
+                    height: 1.5, // Improved readability
+                  ),
                 ),
               ),
               SizedBox(height: 20),
+              Text(
+                "Customize Your Agreement:",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF081B48),
+                ),
+              ),
+              SizedBox(height: 10),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.white, // Background color white
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
+                  border: Border.all(color: Color(0xFF081B48), width: 1.5), // Border
                 ),
                 child: TextField(
                   controller: _agreementController,
                   decoration: InputDecoration(
                     hintText: "Type your agreement details here...",
-                    hintStyle: TextStyle(color: Colors.grey.shade400),
+                    hintStyle: TextStyle(color: Colors.grey.shade500),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(16),
                   ),
@@ -118,23 +131,23 @@ class _SendAgreementPageState extends State<SendAgreementPage> {
               SizedBox(height: 30),
               Center(
                 child: Container(
-                  width: 160, // Adjusted width for better fit
-                  height: 40, // Adjusted height for better fit
+                  width: MediaQuery.of(context).size.width * 0.9, // Button width as device width
+                  height: 50, // Adjusted button height
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       colors: [Color(0xFF004DAB), Color(0xFF09163D)],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
-                        color: Color(0x40F4FAFF),
+                        color: Color(0x40F4FAFF), // Box-shadow
                         offset: Offset(0, 0),
                         blurRadius: 10,
                         spreadRadius: 2,
                       ),
                     ],
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(30), // Rounded button
                   ),
                   child: ElevatedButton(
                     onPressed: _sendAgreement,
@@ -143,21 +156,24 @@ class _SendAgreementPageState extends State<SendAgreementPage> {
                       shadowColor: Colors.transparent,
                       padding: EdgeInsets.zero,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Text(
-                      "Send Agreement",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 14, // Adjusted font size for better fit
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
+                    child: Center(
+                      child: Text(
+                        "Send Agreement",
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 16, // Slightly larger text
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
+              SizedBox(height: 20),
             ],
           ),
         ),

@@ -81,6 +81,7 @@ import 'components/SplashScreen.dart';
 import 'components/UserState.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
+import 'package:login_app/components/Profile_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -98,15 +99,17 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: SplashScreen()
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => SplashScreen(),
+        '/login': (context) => LoginPage(),
+        '/profile': (context) => ProfilePage(),
+      },
     );
   }
 }
-
-

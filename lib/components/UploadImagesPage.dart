@@ -17,19 +17,16 @@ class UploadImagesPage extends StatefulWidget {
 }
 
 class _UploadImagesPageState extends State<UploadImagesPage> {
-  List<File?> selectedMedia = [null, null, null, null, null, null]; // Holds both images and videos
+  List<File?> selectedMedia = [null, null, null, null, null, null];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickMedia(int index, String userId) async {
-    // Check if the user is trying to pick a video
     bool isVideo = (selectedMedia.where((media) => media != null && _isVideo(media)).length == 0);
 
     if (isVideo && index == 5) {
-      // Allow video pick only for the 6th slot
       final pickedVideo = await _picker.pickVideo(source: ImageSource.gallery);
       if (pickedVideo != null) {
-        // Validate video duration
         Duration? videoDuration = await _getVideoDuration(File(pickedVideo.path));
         if (videoDuration != null && videoDuration.inSeconds <= 30) {
           setState(() {
@@ -43,7 +40,6 @@ class _UploadImagesPageState extends State<UploadImagesPage> {
         }
       }
     } else {
-      // Pick an image
       final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedImage != null) {
         setState(() {
@@ -73,16 +69,11 @@ class _UploadImagesPageState extends State<UploadImagesPage> {
     try {
       final String fileName = '${DateTime.now().millisecondsSinceEpoch}.${_isVideo(mediaFile) ? 'mp4' : 'jpg'}';
 
-      print('Starting media upload...');
-      // Upload media to Firebase Storage
       final storageRef = FirebaseStorage.instance.ref().child('posts/$userId/$fileName');
       await storageRef.putFile(mediaFile);
 
-      print('Media uploaded to storage.');
       final mediaUrl = await storageRef.getDownloadURL();
-      print('Download URL retrieved: $mediaUrl');
 
-      // Create post metadata
       final postData = {
         'imageUrl': mediaUrl,
         'description': description,
@@ -91,27 +82,16 @@ class _UploadImagesPageState extends State<UploadImagesPage> {
         'userId': userId,
         'likes': 0,
         'comments': [],
-        'type': _isVideo(mediaFile) ? 'video' : 'image', // Add media type
+        'type': _isVideo(mediaFile) ? 'video' : 'image',
       };
 
-      // Reference to user's feed collection
-      final userFeedRef = _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('feed')
-          .doc(); // Auto-generate document ID
-
-      // Add to user's feed collection
+      final userFeedRef = _firestore.collection('users').doc(userId).collection('feed').doc();
       await userFeedRef.set(postData);
-
-      print('Details uploaded successfully to user feed.');
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Media uploaded successfully!")),
       );
     } catch (e, stackTrace) {
-      print("Error uploading media: $e");
-      print("Stack Trace: $stackTrace");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed to upload media: $e")),
       );
@@ -204,7 +184,7 @@ class _UploadImagesPageState extends State<UploadImagesPage> {
                         ],
                       )
                           : const Center(
-                        child: Icon(Icons.add, color: Colors.blue, size: 30),
+                        child: Icon(Icons.add, color: Color(0xFF081B48), size: 30), // Changed icon color
                       ),
                     ),
                   );
@@ -221,15 +201,40 @@ class _UploadImagesPageState extends State<UploadImagesPage> {
               },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
+                backgroundColor: Colors.transparent, // Transparent to apply gradient
+                shadowColor: const Color(0xF4FAFF40), // Shadow color
+                elevation: 5,
+              ).copyWith(
+                backgroundColor: MaterialStateProperty.resolveWith(
+                      (states) => null, // Ensures no solid background overrides gradient
+                ),
               ),
-              child: Center(
-                child: Text(
-                  "Next",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+              child: Ink(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF004DAB), Color(0xFF09163D)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xF4FEFFE2),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: const Text(
+                    "Next",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
               ),
             ),

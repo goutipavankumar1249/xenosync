@@ -14,12 +14,18 @@ class NextPage extends StatefulWidget {
 
 class _NextPageState extends State<NextPage> {
   String? selectedRole; // Store the selected role
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firebase reference
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance; // Firebase reference
 
   void saveRoleToFirebase(String userId) async {
     if (selectedRole != null) {
       // Save the selected role to Firebase under the userId
-      await _firestore.collection('users').doc('$userId').collection('details').doc('$selectedRole').set({
+      await _firestore
+          .collection('users')
+          .doc('$userId')
+          .collection('details')
+          .doc('$selectedRole')
+          .set({
         'individual': selectedRole, // Add/update the role
       });
 
@@ -27,17 +33,22 @@ class _NextPageState extends State<NextPage> {
       if (selectedRole == "Model") {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ModelNiche()), // Navigate to ModelNiche
+          MaterialPageRoute(
+              builder: (context) => ModelNiche()), // Navigate to ModelNiche
         );
       } else if (selectedRole == "Influencer") {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => InfluencerNiche()), // Navigate to InfluencerNiche
+          MaterialPageRoute(
+              builder: (context) =>
+                  InfluencerNiche()), // Navigate to InfluencerNiche
         );
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProductionCrew()), // Navigate to ProductionCrew
+          MaterialPageRoute(
+              builder: (context) =>
+                  ProductionCrew()), // Navigate to ProductionCrew
         );
       }
 
@@ -56,6 +67,7 @@ class _NextPageState extends State<NextPage> {
   Widget build(BuildContext context) {
     String userId = Provider.of<UserState>(context).userId;
     return Scaffold(
+      backgroundColor: Colors.white, // Set white background
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black), // Back arrow
@@ -72,8 +84,9 @@ class _NextPageState extends State<NextPage> {
             ),
           ),
         ),
+        centerTitle: true,
         elevation: 0, // Remove shadow
-        backgroundColor: Colors.transparent, // Transparent background
+        backgroundColor: Colors.white, // Set white background for AppBar
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -82,7 +95,7 @@ class _NextPageState extends State<NextPage> {
           children: [
             // Welcome text
             Text(
-              "Welcome! Let’s get to know you better",
+              "Welcome! Let's get to know you better",
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -112,7 +125,9 @@ class _NextPageState extends State<NextPage> {
                     color: selectedRole == "Model"
                         ? Color(0xFF004DAB) // Highlight border color #004DAB
                         : Color(0xFF425164), // Default border color #425164
-                    width: selectedRole == "Model" ? 2.5 : 1.5, // Thicker border for selected
+                    width: selectedRole == "Model"
+                        ? 2.5
+                        : 1.5, // Thicker border for selected
                   ),
                   borderRadius: BorderRadius.circular(30), // Rounded corners
                 ),
@@ -141,7 +156,9 @@ class _NextPageState extends State<NextPage> {
                     color: selectedRole == "Influencer"
                         ? Color(0xFF004DAB) // Highlight border color #004DAB
                         : Color(0xFF425164), // Default border color #425164
-                    width: selectedRole == "Influencer" ? 2.5 : 1.5, // Thicker border for selected
+                    width: selectedRole == "Influencer"
+                        ? 2.5
+                        : 1.5, // Thicker border for selected
                   ),
                   borderRadius: BorderRadius.circular(30), // Rounded corners
                 ),
@@ -170,7 +187,9 @@ class _NextPageState extends State<NextPage> {
                     color: selectedRole == "Production Crew"
                         ? Color(0xFF004DAB) // Highlight border color #004DAB
                         : Color(0xFF425164), // Default border color #425164
-                    width: selectedRole == "Production Crew" ? 2.5 : 1.5, // Thicker border for selected
+                    width: selectedRole == "Production Crew"
+                        ? 2.5
+                        : 1.5, // Thicker border for selected
                   ),
                   borderRadius: BorderRadius.circular(30), // Rounded corners
                 ),
@@ -193,11 +212,15 @@ class _NextPageState extends State<NextPage> {
             // Next button
             Container(
               width: double.infinity, // Full width
-              margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+              margin:
+                  EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
               height: 50, // Fixed height
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF004DAB), Color(0xFF09163D)], // Gradient colors
+                  colors: [
+                    Color(0xFF004DAB),
+                    Color(0xFF09163D)
+                  ], // Gradient colors
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -212,7 +235,8 @@ class _NextPageState extends State<NextPage> {
                 ],
               ),
               child: ElevatedButton(
-                onPressed: () => saveRoleToFirebase(userId), // Save role on click
+                onPressed: () =>
+                    saveRoleToFirebase(userId), // Save role on click
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent, // Transparent background
                   shadowColor: Colors.transparent, // Remove default shadow

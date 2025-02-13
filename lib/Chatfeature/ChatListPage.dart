@@ -111,7 +111,6 @@
 // }
 //
 //
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shimmer/shimmer.dart'; // For shimmer effect
@@ -128,7 +127,9 @@ class ChatListPage extends StatefulWidget {
 
 class _ChatListPageState extends State<ChatListPage> {
   List<Map<String, dynamic>> matchedUsers = [];
-  bool isLoading = true; // Track loading state
+  List<Map<String, dynamic>> filteredUsers = [];
+  bool isLoading = true;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -142,7 +143,8 @@ class _ChatListPageState extends State<ChatListPage> {
 
     setState(() {
       matchedUsers = users;
-      isLoading = false; // Stop loading
+      filteredUsers = users;
+      isLoading = false;
     });
   }
 
@@ -178,7 +180,7 @@ class _ChatListPageState extends State<ChatListPage> {
           users.add({
             'userId': userId,
             'username': userDoc.data()?['username'],
-            'profileImage': imageSnapshot.data()?['image_url'], // Fetch profile image
+            'profileImage': imageSnapshot.data()?['image_url'],
           });
         }
       } catch (e) {
@@ -189,39 +191,61 @@ class _ChatListPageState extends State<ChatListPage> {
     return users;
   }
 
+  void _filterUsers(String query) {
+    setState(() {
+      filteredUsers = matchedUsers
+          .where((user) => user['username'].toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Chats',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF004DAB), Color(0xFF09163D)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      backgroundColor: Colors.white, // Set background color to white
+      body: Column(
+        children: [
+          _buildSearchBar(), // Add search bar
+          Expanded(
+            child: isLoading
+                ? _buildShimmerLoading()
+                : filteredUsers.isEmpty
+                ? _buildEmptyState()
+                : ListView.builder(
+              itemCount: filteredUsers.length,
+              itemBuilder: (context, index) {
+                final user = filteredUsers[index];
+                return _buildChatItem(user);
+              },
             ),
           ),
-        ),
+        ],
       ),
-      body: isLoading
-          ? _buildShimmerLoading() // Show shimmer effect while loading
-          : matchedUsers.isEmpty
-          ? _buildEmptyState() // Show empty state
-          : ListView.builder(
-        itemCount: matchedUsers.length,
-        itemBuilder: (context, index) {
-          final user = matchedUsers[index];
-          return _buildChatItem(user);
-        },
+    );
+  }
+
+  // Search Bar Widget
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: TextField(
+        controller: searchController,
+        onChanged: _filterUsers,
+        decoration: InputDecoration(
+          hintText: "Search...",
+          prefixIcon: Icon(Icons.search, color: Color(0xFF081B48)),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: EdgeInsets.symmetric(vertical: 12),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: Color(0xFF081B48), width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(color: Color(0xFF081B48), width: 2),
+          ),
+        ),
       ),
     );
   }
@@ -232,26 +256,15 @@ class _ChatListPageState extends State<ChatListPage> {
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
       child: ListView.builder(
-        itemCount: 5, // Show 5 shimmer items
+        itemCount: 5,
         itemBuilder: (context, index) {
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.grey[300],
-              ),
-              title: Container(
-                height: 16,
-                width: 100,
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: Container(
+              height: 60,
+              decoration: BoxDecoration(
                 color: Colors.grey[300],
-              ),
-              subtitle: Container(
-                height: 12,
-                width: 150,
-                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(30),
               ),
             ),
           );
@@ -267,7 +280,7 @@ class _ChatListPageState extends State<ChatListPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/images/no_chats.png', // Add an illustration for empty state
+            'assets/images/no_chats.png',
             width: 150,
             height: 150,
           ),
@@ -287,41 +300,10 @@ class _ChatListPageState extends State<ChatListPage> {
 
   // Chat list item widget
   Widget _buildChatItem(Map<String, dynamic> user) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      elevation: 4,
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: user['profileImage'] != null
-              ? NetworkImage(user['profileImage'])
-              : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-        ),
-        title: Text(
-          user['username'] ?? 'Unknown',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        subtitle: const Text(
-          'Last message preview...', // Replace with actual last message
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 14,
-          ),
-        ),
-        trailing: const Text(
-          '12:30 PM', // Replace with actual timestamp
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+      child: GestureDetector(
         onTap: () {
-          // Navigate to chat screen
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -333,6 +315,36 @@ class _ChatListPageState extends State<ChatListPage> {
             ),
           );
         },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xFFF5F7FB), // Light shade inside card
+            borderRadius: BorderRadius.circular(50), // More roundness
+            border: Border.all(color: Color(0xFF081B48), width: 2),
+          ),
+          padding: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundImage: user['profileImage'] != null
+                    ? NetworkImage(user['profileImage'])
+                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  user['username'] ?? 'Unknown',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: Color(0xFF081B48)), // Navigation arrow
+            ],
+          ),
+        ),
       ),
     );
   }

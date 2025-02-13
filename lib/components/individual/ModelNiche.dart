@@ -47,7 +47,12 @@ class _ModelNicheState extends State<ModelNiche> {
       return;
     }
 
-    await _firestore.collection('users').doc('$userId').collection('details').doc('Model Niche').set({
+    await _firestore
+        .collection('users')
+        .doc('$userId')
+        .collection('details')
+        .doc('Model Niche')
+        .set({
       "niches": selectedNiche.toList(),
     });
 
@@ -64,24 +69,24 @@ class _ModelNicheState extends State<ModelNiche> {
     String userId = Provider.of<UserState>(context).userId;
 
     return Scaffold(
+      backgroundColor: Colors.white, // Set white background
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Center(
-          child: Text(
-            "Shot OK", // Brand name
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontFamily: 'Montserrat', // Montserrat font
-            ),
+        title: Text(
+          "Shot OK",
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontFamily: 'Montserrat',
           ),
         ),
+        centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white, // Set white background for AppBar
       ),
       body: Column(
         children: [
@@ -192,7 +197,8 @@ class _ModelNicheState extends State<ModelNiche> {
               color: isSelected ? Colors.white : Color(0xFF081B48),
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
-            backgroundColor: isSelected ? Color(0xFF081B48) : Colors.transparent,
+            backgroundColor:
+                isSelected ? Color(0xFF081B48) : Colors.transparent,
             side: BorderSide(color: Color(0xFF081B48)),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:login_app/components/individual/DetailsForInfluencer.dart';
-import 'package:login_app/components/individual/Model2.dart';
 import 'package:provider/provider.dart';
 import '../UserState.dart';
 
@@ -12,50 +11,38 @@ class SocialMedia extends StatefulWidget {
 
 class _SocialMediaState extends State<SocialMedia> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final Set<String> selectedPlatforms = {};
 
-  // Options
-  final List<String> nicheOptions = [
+  final List<String> platforms = [
     "Instagram",
     "YouTube",
-    "TikTok",
-    "Twitter",
+    "Moj",
+    "ShareChat",
     "Facebook",
     "LinkedIn",
-    "Pinterest",
-    "Snapchat",
   ];
 
-  // Selected options
-  final Set<String> selectedNiche = {};
-
-  void toggleSelection(String option, Set<String> selectedSet) {
-    setState(() {
-      if (selectedSet.contains(option)) {
-        selectedSet.remove(option);
-      } else {
-        selectedSet.add(option);
-      }
-    });
-  }
-
   Future<void> _saveData(String userId) async {
-    if (selectedNiche.isEmpty) {
+    if (selectedPlatforms.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select at least one option.")),
+        SnackBar(content: Text("Please select at least one platform")),
       );
       return;
     }
 
-    await _firestore.collection('users').doc('$userId').collection('details').doc('Social Media Platform').set({
-      "media": selectedNiche.toList(),
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('details')
+        .doc('Social Media')
+        .set({
+      "platforms": selectedPlatforms.toList(),
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("SocialMedia details saved successfully!")),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DetailsForInfluencer()),
     );
-
-    // Navigate to the next page (if applicable)
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Model2()));
   }
 
   @override
@@ -63,92 +50,147 @@ class _SocialMediaState extends State<SocialMedia> {
     String userId = Provider.of<UserState>(context).userId;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Influencer Niche",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "choose one or more Influencer Niche",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            SizedBox(height: 20),
-            _buildSectionTitle("Niche"),
-            _buildChipGroup(nicheOptions, selectedNiche),
-            SizedBox(height: 220),
-            ElevatedButton(
-              onPressed: () => _saveData(userId),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Color(0xFF081B48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  "Next",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ),
-          ],
+        title: Text(
+          "Shot OK",
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+            fontFamily: 'Montserrat',
+          ),
         ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-    );
-  }
-
-  Widget _buildChipGroup(List<String> options, Set<String> selectedSet) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: options.map((option) {
-        bool isSelected = selectedSet.contains(option);
-        return GestureDetector(
-          onTap: () => toggleSelection(option, selectedSet),
-          child: Chip(
-            label: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(option),
-                if (isSelected) ...[
-                  SizedBox(width: 5),
-                  Icon(Icons.close, size: 16, color: Colors.white),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Select Your Social Media Platforms",
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat',
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Choose the platforms where you have an active presence.",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF6b6b6b),
+                      fontFamily: 'Source Sans Pro',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: platforms.map((platform) {
+                      bool isSelected = selectedPlatforms.contains(platform);
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              selectedPlatforms.remove(platform);
+                            } else {
+                              selectedPlatforms.add(platform);
+                            }
+                          });
+                        },
+                        child: Chip(
+                          label: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(platform),
+                              if (isSelected) ...[
+                                SizedBox(width: 5),
+                                Icon(Icons.close,
+                                    size: 16, color: Colors.white),
+                              ],
+                            ],
+                          ),
+                          labelStyle: TextStyle(
+                            color:
+                                isSelected ? Colors.white : Color(0xFF081B48),
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            fontFamily: 'Montserrat',
+                          ),
+                          backgroundColor: isSelected
+                              ? Color(0xFF081B48)
+                              : Colors.transparent,
+                          side: BorderSide(color: Color(0xFF081B48)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ],
-              ],
-            ),
-            labelStyle: TextStyle(
-              color: isSelected ? Colors.white : Color(0xFF081B48),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            ),
-            backgroundColor: isSelected ? Color(0xFF081B48) : Colors.transparent,
-            side: BorderSide(color: Color(0xFF081B48)),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              ),
             ),
           ),
-        );
-      }).toList(),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF004DAB), Color(0xFF09163D)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x40F4FAFF),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () => _saveData(userId),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  padding: EdgeInsets.zero,
+                ),
+                child: Text(
+                  "Next",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 19,
+                    height: 26 / 19,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

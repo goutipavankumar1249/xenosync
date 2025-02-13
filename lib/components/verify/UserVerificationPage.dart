@@ -26,7 +26,8 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
 
   // User details from passed userId
   String get userId => widget.userId;
-  final String username = FirebaseAuth.instance.currentUser!.displayName ?? "Unknown User";
+  final String username =
+      FirebaseAuth.instance.currentUser!.displayName ?? "Unknown User";
   final String role = "user"; // This can be dynamic
 
   Future<void> pickImage(bool isAadhar) async {
@@ -47,7 +48,8 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
   // Send email with images and user details
   Future<void> sendEmail() async {
     final Email email = Email(
-      body: 'User: $username\nRole: $role\nUser ID: $userId\nAadhar Card Uploaded: ${aadharCardImage != null}\nSelfie Uploaded: ${selfieImage != null}',
+      body:
+          'User: $username\nRole: $role\nUser ID: $userId\nAadhar Card Uploaded: ${aadharCardImage != null}\nSelfie Uploaded: ${selfieImage != null}',
       subject: 'User Verification Details',
       recipients: ['ssuryabackup@gmail.com'],
       attachmentPaths: [
@@ -66,7 +68,8 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
     await userDoc.update({
       'aadharUpload': aadharCardImage != null,
       'selfieUpload': selfieImage != null,
-      'verifiedAccount': false, // Initially set to false, to be verified later by admin
+      'verifiedAccount':
+          false, // Initially set to false, to be verified later by admin
     });
   }
 
@@ -94,32 +97,37 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text(
-          "User Verification",
+          "Shot OK",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
+            fontFamily: 'Montserrat',
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue.shade700,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title and Description
             Text(
               "Verify Your Identity",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue.shade700,
+                color: Color(0xFF081B48),
+                fontFamily: 'Montserrat',
               ),
             ),
             SizedBox(height: 8),
@@ -128,6 +136,7 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
+                fontFamily: 'Montserrat',
               ),
             ),
             SizedBox(height: 20),
@@ -156,7 +165,8 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade700,
+                      color: Color(0xFF081B48),
+                      fontFamily: 'Montserrat',
                     ),
                   ),
                   SizedBox(height: 10),
@@ -178,46 +188,66 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                     Row(
                       children: [
                         Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                aadharUploaded = true; // Disable buttons after upload
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue.shade700,
-                              padding: EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Color(0xFF004DAB), Color(0xFF09163D)],
                               ),
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                            child: Text(
-                              "Upload Aadhar Card",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  aadharUploaded = true;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                "Upload Aadhar Card",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontFamily: 'Montserrat',
+                                ),
                               ),
                             ),
                           ),
                         ),
                         SizedBox(width: 10),
                         Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => pickImage(true),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey.shade300,
-                              padding: EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                            child: Text(
-                              "Replace Aadhar Card",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade700,
+                            child: ElevatedButton(
+                              onPressed: () => pickImage(true),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                "Replace Aadhar Card",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF081B48),
+                                  fontFamily: 'Montserrat',
+                                ),
                               ),
                             ),
                           ),
@@ -225,31 +255,48 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                       ],
                     ),
                   if (aadharCardImage == null)
-                    ElevatedButton(
-                      onPressed: () => pickImage(true),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade700,
-                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0xFF004DAB), Color(0xFF09163D)],
                         ),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: Text(
-                        "Upload Aadhar Card",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      child: ElevatedButton(
+                        onPressed: () => pickImage(true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: Text(
+                          "Upload Aadhar Card",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontFamily: 'Montserrat',
+                          ),
                         ),
                       ),
                     ),
                   if (aadharUploaded)
-                    Text(
-                      "Aadhar Card Uploaded",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade700,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        "Aadhar Card Uploaded",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade700,
+                          fontFamily: 'Montserrat',
+                        ),
                       ),
                     ),
                 ],
@@ -281,7 +328,8 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade700,
+                      color: Color(0xFF081B48),
+                      fontFamily: 'Montserrat',
                     ),
                   ),
                   SizedBox(height: 10),
@@ -303,46 +351,66 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                     Row(
                       children: [
                         Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                selfieUploaded = true; // Disable buttons after upload
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue.shade700,
-                              padding: EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Color(0xFF004DAB), Color(0xFF09163D)],
                               ),
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                            child: Text(
-                              "Upload Selfie",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  selfieUploaded = true;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                "Upload Selfie",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontFamily: 'Montserrat',
+                                ),
                               ),
                             ),
                           ),
                         ),
                         SizedBox(width: 10),
                         Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => pickImage(false),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey.shade300,
-                              padding: EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                            child: Text(
-                              "Replace Selfie",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade700,
+                            child: ElevatedButton(
+                              onPressed: () => pickImage(false),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                "Replace Selfie",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF081B48),
+                                  fontFamily: 'Montserrat',
+                                ),
                               ),
                             ),
                           ),
@@ -350,31 +418,48 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                       ],
                     ),
                   if (selfieImage == null)
-                    ElevatedButton(
-                      onPressed: () => pickImage(false),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade700,
-                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0xFF004DAB), Color(0xFF09163D)],
                         ),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: Text(
-                        "Upload Selfie",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      child: ElevatedButton(
+                        onPressed: () => pickImage(false),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: Text(
+                          "Upload Selfie",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontFamily: 'Montserrat',
+                          ),
                         ),
                       ),
                     ),
                   if (selfieUploaded)
-                    Text(
-                      "Selfie Uploaded",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade700,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        "Selfie Uploaded",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade700,
+                          fontFamily: 'Montserrat',
+                        ),
                       ),
                     ),
                 ],
@@ -391,16 +476,18 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                     await updateUserStatus();
                     // Show confirmation message
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Verification files submitted successfully!'),
+                      content:
+                          Text('Verification files submitted successfully!'),
                     ));
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Please upload both Aadhar Card and Selfie.'),
+                      content:
+                          Text('Please upload both Aadhar Card and Selfie.'),
                     ));
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade700,
+                  backgroundColor: Color(0xFF004DAB),
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -412,6 +499,7 @@ class _UserVerificationPageState extends State<UserVerificationPage> {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    fontFamily: 'Montserrat',
                   ),
                 ),
               ),

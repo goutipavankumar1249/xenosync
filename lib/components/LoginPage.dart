@@ -35,7 +35,8 @@ class _LoginPageState extends State<LoginPage> {
       // Login successful
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainHomePage()), // Replace with your HomePage
+        MaterialPageRoute(
+            builder: (context) => MainHomePage()), // Replace with your HomePage
       );
     } on FirebaseAuthException catch (e) {
       // Handle login errors
@@ -71,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -111,7 +113,8 @@ class _LoginPageState extends State<LoginPage> {
               controller: _emailController,
               decoration: InputDecoration(
                 hintText: "Enter your email id...",
-                contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: BorderSide(
@@ -151,7 +154,8 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: true,
               decoration: InputDecoration(
                 hintText: "Enter your password...",
-                contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: BorderSide(
@@ -180,11 +184,15 @@ class _LoginPageState extends State<LoginPage> {
             Center(
               child: Container(
                 width: double.infinity, // Full width
-                margin: EdgeInsets.symmetric(horizontal: 20), // Padding on both sides
+                margin: EdgeInsets.symmetric(
+                    horizontal: 20), // Padding on both sides
                 height: 50, // Fixed height
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF004DAB), Color(0xFF09163D)], // Gradient colors
+                    colors: [
+                      Color(0xFF004DAB),
+                      Color(0xFF09163D)
+                    ], // Gradient colors
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
@@ -201,25 +209,27 @@ class _LoginPageState extends State<LoginPage> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _loginUser,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent, // Transparent background
+                    backgroundColor:
+                        Colors.transparent, // Transparent background
                     shadowColor: Colors.transparent, // Remove default shadow
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25), // Rounded corners
+                      borderRadius:
+                          BorderRadius.circular(25), // Rounded corners
                     ),
                     padding: EdgeInsets.zero, // Remove default padding
                   ),
                   child: _isLoading
                       ? CircularProgressIndicator(color: Colors.white)
                       : Text(
-                    "Next",
-                    style: TextStyle(
-                      color: Colors.white, // White text color
-                      fontFamily: 'Montserrat', // Montserrat font
-                      fontWeight: FontWeight.w700, // Font weight 700
-                      fontSize: 19, // Font size 19px
-                      height: 26 / 19, // Line height 26px
-                    ),
-                  ),
+                          "Next",
+                          style: TextStyle(
+                            color: Colors.white, // White text color
+                            fontFamily: 'Montserrat', // Montserrat font
+                            fontWeight: FontWeight.w700, // Font weight 700
+                            fontSize: 19, // Font size 19px
+                            height: 26 / 19, // Line height 26px
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -229,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Don’t have an account?",
+                  "Don't have an account?",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -238,7 +248,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage())); // Navigate to SignUpPage
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SignUpPage())); // Navigate to SignUpPage
                   },
                   child: Text(
                     "Sign up",
